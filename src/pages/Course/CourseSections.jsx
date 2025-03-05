@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import toast from "react-hot-toast";
-
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useStateContext, currentColor } from "../../contexts/ContextProvider";
+import { useStateContext } from "../../contexts/ContextProvider";
 import {
   AiOutlineEdit,
   AiOutlineDelete,
@@ -19,13 +18,13 @@ const CourseSections = () => {
     title: "",
     description: "",
     videoFile: null,
-    videoUrl: "", // Store existing video URL
+    videoUrl: "",
     timeDuration: "",
   });
   const [editingSectionId, setEditingSectionId] = useState(null);
 
   const videoFileInput = useRef(null);
-  const videoPreviewRef = useRef(null); // Reference for the video preview
+  const videoPreviewRef = useRef(null);
 
   useEffect(() => {
     fetchSections();
@@ -36,20 +35,18 @@ const CourseSections = () => {
       const res = await axios.get(
         `http://localhost:3210/api/course/get-course-details/${courseId}`
       );
-      console.log(res.data)
+      console.log(res.data);
       if (res.data.success) {
-        console.log(res.data);
         if (res.data.data.courseContent.length === 0) {
           toast.success("There are no sections in this Course");
         } else {
           toast.success(res.data.message);
         }
-        
-
-        setSections(res?.data?.data?.courseContent);
+        setSections(res.data.data.courseContent);
       }
     } catch (error) {
       console.error("Error fetching sections:", error);
+      toast.error("Error fetching sections");
     }
   };
 
@@ -58,7 +55,6 @@ const CourseSections = () => {
     const url = editingSectionId
       ? `http://54.236.98.193:3210/api/course/update-section/${editingSectionId}`
       : `http://54.236.98.193:3210/api/course/create-section`;
-    console.log(url);
     try {
       const formData = new FormData();
       const method = editingSectionId ? "patch" : "post";
@@ -75,21 +71,21 @@ const CourseSections = () => {
         formData.append("files", newSection.videoFile);
       }
       formData.append("timeDuration", newSection.timeDuration);
-      console.log(newSection.videoFile);
+
       const res = await axios[method](url, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (res.data.success) {
-        console.log("toasting...", res.data);
         toast.success("Section saved successfully! 🎉");
         fetchSections();
         cancelEdit();
       }
     } catch (error) {
       console.error("Error adding section:", error);
+      toast.error("Error adding section");
     } finally {
-      setLoading(false); // Hide spinner
+      setLoading(false);
     }
   };
 
@@ -102,6 +98,7 @@ const CourseSections = () => {
       toast.success("Section Deleted Successfully");
     } catch (error) {
       console.error("Error deleting section:", error);
+      toast.error("Error deleting section");
     }
   };
 
@@ -114,7 +111,7 @@ const CourseSections = () => {
       videoUrl: section.videoUrl || "",
       timeDuration: section.timeDuration,
     });
-    toast.success("Section edited Successfully");
+    toast.success("Section ready for editing");
   };
 
   const cancelEdit = () => {
@@ -131,7 +128,6 @@ const CourseSections = () => {
     }
   };
 
-  // Handle video file selection and get duration
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -140,26 +136,25 @@ const CourseSections = () => {
         ...newSection,
         videoFile: file,
         videoUrl: videoUrl,
-        timeDuration: "", // Reset duration before calculation
+        timeDuration: "",
       });
 
-      // Wait for video to load before extracting duration
       setTimeout(() => {
         if (videoPreviewRef.current) {
-          videoPreviewRef.current.load(); // Ensure metadata reloads
+          videoPreviewRef.current.load();
           videoPreviewRef.current.onloadedmetadata = () => {
             setNewSection((prev) => ({
               ...prev,
-              timeDuration: videoPreviewRef.current.duration.toFixed(2), // Extract duration
+              timeDuration: videoPreviewRef.current.duration.toFixed(2),
             }));
           };
         }
-      }, 500); // Allow some time for metadata to load
+      }, 500);
     }
   };
 
   return (
-    <div className="p-4 bg-white  shadow-md md:rounded-3xl rounded-xl">
+    <div className="p-4 bg-white shadow-md md:rounded-3xl rounded-xl">
       <h2 className="text-xl font-bold mb-4">Course Sections</h2>
 
       <div className="mb-4">
@@ -182,17 +177,15 @@ const CourseSections = () => {
           className="border p-2 w-full mb-2"
         />
 
-        {/* Video Preview */}
         {newSection.videoUrl && (
           <video
-            ref={videoPreviewRef} // Attach ref to video element
+            ref={videoPreviewRef}
             src={newSection.videoUrl}
             controls
             className="w-full h-40 mb-2 rounded-lg shadow-md"
           />
         )}
 
-        {/* File Input */}
         <input
           type="file"
           accept="video/*"
@@ -209,27 +202,7 @@ const CourseSections = () => {
           className="border p-2 w-full mb-2 bg-gray-100"
         />
 
-        {editingSectionId ? (
-          <div className="flex space-x-2">
-            <button
-              style={{ backgroundColor: currentColor }}
-              onClick={handleAddOrUpdateSection}
-              className="text-white px-4 py-2 rounded flex items-center justify-center"
-              disabled={loading} // Disable button when loading
-            >
-              {loading ? (
-                <AiOutlineLoading3Quarters
-                  className="animate-spin mr-2"
-                  size={20}
-                />
-              ) : editingSectionId ? (
-                "Update Section"
-              ) : (
-                "Add Section"
-              )}
-            </button>
-          </div>
-        ) : (
+        <div className="flex space-x-2">
           <button
             style={{ backgroundColor: currentColor }}
             onClick={handleAddOrUpdateSection}
@@ -237,15 +210,14 @@ const CourseSections = () => {
             disabled={loading}
           >
             {loading ? (
-              <AiOutlineLoading3Quarters
-                className="animate-spin mr-2"
-                size={20}
-              />
+              <AiOutlineLoading3Quarters className="animate-spin mr-2" size={20} />
+            ) : editingSectionId ? (
+              "Update Section"
             ) : (
               "Add Section"
             )}
           </button>
-        )}
+        </div>
       </div>
 
       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
@@ -253,6 +225,7 @@ const CourseSections = () => {
           <tr>
             <th className="py-2 px-4 border">Title</th>
             <th className="py-2 px-4 border">Description</th>
+            <th className="py-2 px-4 border">Video</th>
             <th className="py-2 px-4 border">Time Duration</th>
             <th className="py-2 px-4 border">Actions</th>
           </tr>
@@ -260,8 +233,20 @@ const CourseSections = () => {
         <tbody>
           {sections.map((section) => (
             <tr key={section._id} className="hover:bg-gray-100">
-              <td className="py-2 px-4 border">{section.title}</td>
-              <td className="py-2 px-4 border">{section.description}</td>
+              <td className="py-2 px-4 border">{section?.title}</td>
+              <td className="py-2 px-4 border">{section?.description}</td>
+              <td className="py-2 px-4 border">
+                {section.videoUrl ? (
+                  <video
+                    src={section.videoUrl}
+                    preload="metadata"
+                    controls
+                    className="w-32 h-20 object-cover rounded"
+                  />
+                ) : (
+                  "No Video"
+                )}
+              </td>
               <td className="py-2 px-4 border">{section.timeDuration} sec</td>
               <td className="py-2 px-4 flex justify-center items-center border space-x-2">
                 <button

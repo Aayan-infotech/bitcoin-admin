@@ -34,6 +34,7 @@ const CourseManagement = () => {
       if (JSON.stringify(fetchedCourses) !== JSON.stringify(courses)) {
         setCourses(fetchedCourses);
       }
+      toast.success(response.data.message||"Courses fetched Successfully")
     } catch (error) {
       console.error("Error fetching courses:", error);
       toast.error("Failed to fetch courses.");
