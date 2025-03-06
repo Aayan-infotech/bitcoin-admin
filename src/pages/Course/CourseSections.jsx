@@ -33,7 +33,7 @@ const CourseSections = () => {
   const fetchSections = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3210/api/course/get-course-details/${courseId}`
+        `http://54.236.98.193:3210/api/course/get-course-details/${courseId}`
       );
       console.log(res.data);
       if (res.data.success) {

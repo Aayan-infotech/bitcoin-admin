@@ -27,7 +27,7 @@ const UserManagement = () => {
     try {
       toast.dismiss();
       const response = await axios.get(
-        "http://localhost:3210/api/admin/get-all-user"
+        "http://54.236.98.193:3210/api/admin/get-all-user"
       );
       setUsers(response.data.users)
     } catch (error) {

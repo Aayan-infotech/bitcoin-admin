@@ -26,7 +26,7 @@ const AlphabetsManagement = () => {
   const fetchAlphabets = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3210/api/alphabet/get-all-alphabet"
+        "http://54.236.98.193:3210/api/alphabet/get-all-alphabet"
       );
       setAlphabets(response.data.alphabets);
     } catch (error) {
@@ -59,7 +59,7 @@ const AlphabetsManagement = () => {
       if (editAlphabet) {
         // If editing, send a PATCH request.
         res = await axios.patch(
-          `http://localhost:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
+          `http://54.236.98.193:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
           formData,
           {
             headers: {
@@ -72,7 +72,7 @@ const AlphabetsManagement = () => {
       } else {
         // Creating new alphabet entry
         res = await axios.post(
-          "http://localhost:3210/api/alphabet/create-alphabet",
+          "http://54.236.98.193:3210/api/alphabet/create-alphabet",
           formData,
           {
             headers: {
