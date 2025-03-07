@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { Header } from "../../components";
 import { useStateContext } from "../../contexts/ContextProvider";
 import axios from "axios";
-import CourseDisplay from "../../components/CourseDisplay";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import UsersTable from "../../components/UsersTable";
@@ -12,8 +11,6 @@ const UserManagement = () => {
   const navigate = useNavigate();
   const { currentColor } = useStateContext();
   const [Users, setUsers] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [status, setStatus] = useState("Draft");
 
   const {
     register,
@@ -25,9 +22,8 @@ const UserManagement = () => {
   // Fetch Users with optimization
   const fetchUsers = useCallback(async () => {
     try {
-      toast.dismiss();
       const response = await axios.get(
-        "http://localhost:3210/api/user/get-all-user"
+        "http://54.236.98.193:3210/api/user/get-all-user"
       );
       toast.success(response.data.message)
       setUsers(response.data.users)
