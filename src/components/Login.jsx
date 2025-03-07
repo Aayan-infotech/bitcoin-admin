@@ -18,9 +18,9 @@ const Login = ({ setIsLoggedIn }) => {
       });
 
       console.log(res);
-      if (res?.data?.user.userType !== "Admin"){
-        toast.error("Please Login with correct credentials")
-        return
+      if (res?.data?.user.userType !== "Admin") {
+        toast.error("Please Login with correct credentials");
+        return;
       }
       if (res?.data?.success) {
         const token = res?.data?.token;
