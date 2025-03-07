@@ -12,11 +12,16 @@ const Login = ({ setIsLoggedIn }) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://54.236.98.193:3210/api/auth/login", {
+      const res = await axios.post("http://localhost:3210/api/auth/login", {
         email,
         password,
       });
 
+      console.log(res);
+      if (res?.data?.user.userType !== "Admin"){
+        toast.error("Please Login with correct credentials")
+        return
+      }
       if (res?.data?.success) {
         const token = res?.data?.token;
         if (token) {
@@ -24,11 +29,10 @@ const Login = ({ setIsLoggedIn }) => {
           setIsLoggedIn(true); // Update authentication state
 
           // Use toast for successful login
-          window.location.reload()
+          window.location.reload();
           toast.success("Login successful!");
 
-          // Redirect to Home/Dashboard immediately after login
-          navigate("/"); // Redirect to Home/Dashboard
+          navigate("/");
         } else {
           toast.error("Login failed: No token received");
         }
@@ -43,9 +47,12 @@ const Login = ({ setIsLoggedIn }) => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md w-80">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-6 rounded-lg shadow-md w-80"
+      >
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700">Email</label>
           <input
@@ -68,7 +75,10 @@ const Login = ({ setIsLoggedIn }) => {
           />
         </div>
 
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+        >
           Login
         </button>
       </form>
