@@ -27,7 +27,7 @@ const CourseManagement = () => {
     try {
       toast.dismiss();
       const response = await axios.get(
-        "http://54.236.98.193:3210/api/course/get-all-courses"
+        "http://3.223.253.106:3210/api/course/get-all-courses"
       );
       const fetchedCourses = response.data.data;
       // Update state only if the fetched courses are different
@@ -58,7 +58,7 @@ const CourseManagement = () => {
       let response;
       if (editCourse) {
         response = await axios.patch(
-          `http://54.236.98.193:3210/api/course/update-course/${editCourse._id}`,
+          `http://3.223.253.106:3210/api/course/update-course/${editCourse._id}`,
           {
             ...data,
             status,
@@ -68,7 +68,7 @@ const CourseManagement = () => {
         toast.success("Course updated successfully");
       } else {
         response = await axios.post(
-          "http://54.236.98.193:3210/api/course/create-course",
+          "http://3.223.253.106:3210/api/course/create-course",
           {
             ...data,
             status,
@@ -96,7 +96,7 @@ const CourseManagement = () => {
     async (id, courseStatus) => {
       try {
         const res = await axios.patch(
-          `http://54.236.98.193:3210/api/course/update-course-status/${id}`,
+          `http://3.223.253.106:3210/api/course/update-course-status/${id}`,
           { courseStatus }
         );
         toast.success(`Course ${id} status updated to ${courseStatus}`);
@@ -112,7 +112,7 @@ const CourseManagement = () => {
     console.log(courseId)
     try {
       await axios.delete(
-        `http://54.236.98.193:3210/api/course/delete-course/${courseId}`
+        `http://3.223.253.106:3210/api/course/delete-course/${courseId}`
       );
       setCourses(courses.filter((course) => course._id !== courseId));
       toast.success("Section Deleted Successfully");
@@ -141,7 +141,7 @@ const CourseManagement = () => {
   const onDelete = useCallback(
     async (courseId) => {
       try {
-        await axios.delete(`http://54.236.98.193:3210/api/course/${courseId}`);
+        await axios.delete(`http://3.223.253.106:3210/api/course/${courseId}`);
         toast.success("Course deleted successfully");
         fetchCourses();
       } catch (error) {

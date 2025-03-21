@@ -26,7 +26,7 @@ const QuizManagement = () => {
   const fetchQuizzes = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://54.236.98.193:3210/api/quiz/get-all-quizzes"
+        "http://3.223.253.106:3210/api/quiz/get-all-quizzes"
       );
       console.log(response);
       toast.success(response.data.message);
@@ -45,12 +45,12 @@ const QuizManagement = () => {
       let response;
       if (editQuiz) {
         response = await axios.patch(
-          `http://54.236.98.193:3210/api/quiz/update-quiz/${editQuiz._id}`,
+          `http://3.223.253.106:3210/api/quiz/update-quiz/${editQuiz._id}`,
           data
         );
       } else {
         response = await axios.post(
-          "http://54.236.98.193:3210/api/quiz/create-quiz",
+          "http://3.223.253.106:3210/api/quiz/create-quiz",
           data
         );
       }
@@ -85,7 +85,7 @@ const QuizManagement = () => {
   const onDelete = useCallback(
     async (quizId) => {
       try {
-        await axios.delete(`http://54.236.98.193:3210/api/quiz/${quizId}`);
+        await axios.delete(`http://3.223.253.106:3210/api/quiz/${quizId}`);
         toast.success("Quiz deleted successfully");
         fetchQuizzes();
       } catch (error) {

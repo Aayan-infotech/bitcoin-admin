@@ -23,10 +23,10 @@ const UserManagement = () => {
   const fetchUsers = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://54.236.98.193:3210/api/user/get-all-user"
+        "http://3.223.253.106:3210/api/user/get-all-user"
       );
-      toast.success(response.data.message)
-      setUsers(response.data.users)
+      toast.success(response.data.message);
+      setUsers(response.data.users);
     } catch (error) {
       console.error("Error fetching Users:", error);
       toast.error("Failed to fetch Users.");
@@ -42,7 +42,7 @@ const UserManagement = () => {
     async (id, Userstatus) => {
       try {
         const res = await axios.patch(
-          `http://54.236.98.193:3210/api/course/update-course-status/${id}`,
+          `http://3.223.253.106:3210/api/course/update-course-status/${id}`,
           { Userstatus }
         );
         toast.success(`Course ${id} status updated to ${Userstatus}`);
@@ -62,7 +62,11 @@ const UserManagement = () => {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-        {Users.length === 0 ? <p>No Users found</p> : <UsersTable users={Users}/>}
+        {Users.length === 0 ? (
+          <p>No Users found</p>
+        ) : (
+          <UsersTable users={Users} />
+        )}
       </div>
     </div>
   );

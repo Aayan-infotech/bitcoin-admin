@@ -12,13 +12,13 @@ const Login = ({ setIsLoggedIn }) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://54.236.98.193:3210/api/auth/login", {
+      const res = await axios.post("http://3.223.253.106:3210/api/auth/login", {
         email,
         password,
       });
 
       console.log(res);
-      if (res?.data?.user.userType !== "Admin") {
+      if (res?.data?.user?.userType !== "Admin") {
         toast.error("Please Login with correct credentials");
         return;
       }
