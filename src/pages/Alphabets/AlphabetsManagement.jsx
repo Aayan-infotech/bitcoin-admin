@@ -28,7 +28,8 @@ const AlphabetsManagement = () => {
       const response = await axios.get(
         "http://3.223.253.106:3210/api/alphabet/get-all-alphabet"
       );
-      setAlphabets(response.data.alphabets);
+      console.log(response)
+      setAlphabets(response?.data?.data);
     } catch (error) {
       console.error("Error fetching alphabets:", error);
       toast.error("Failed to fetch alphabets.");
@@ -137,7 +138,7 @@ const AlphabetsManagement = () => {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-        {alphabets.length === 0 ? (
+        {alphabets?.length === 0 ? (
           <p>No Alphabets found</p>
         ) : (
           <AlphabetTable data={alphabets} handleEditAlphabet={handleEditAlphabet} />

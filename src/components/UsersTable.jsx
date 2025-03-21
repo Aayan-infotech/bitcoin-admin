@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importing CRUD icons
+import axios from "axios";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { FaEdit, FaTrash, FaEye } from "react-icons/fa"; // Importing CRUD icons
+import { MdOutlineMessage } from "react-icons/md";
 
 const UsersTable = ({ users = [] }) => {
   const [userData, setUserData] = useState(users || []);
@@ -11,17 +14,21 @@ const UsersTable = ({ users = [] }) => {
   };
 
   const handleEdit = (userId) => {
-    console.log('Edit user', userId);
+    console.log("Edit user", userId);
   };
 
-  const handleStatusToggle = (userId) => {
-    setUserData(
-      userData.map((user) =>
-        user._id === userId
-          ? { ...user, isEmailVerified: !user.isEmailVerified }
-          : user
-      )
-    );
+  const sendReminderMessage = async (userId) => {
+    try {
+      const res = await axios.post(
+        `http://3.223.253.106:3210/api/user/verification-reminder/${userId}`
+      );
+      console.log(res);
+      toast.success("Reminder Sent successfully!");
+    } catch (error) {
+      toast.error(
+        error?.respnse?.data?.message || "Error While Sending reminder email"
+      );
+    }
   };
 
   const handleViewDetails = (user) => {
@@ -53,21 +60,20 @@ const UsersTable = ({ users = [] }) => {
             {userData.length > 0 ? (
               userData.map((user) => (
                 <tr key={user._id} className="border-b">
-                  <td className="px-4 py-2">{user.name || 'N/A'}</td>
-                  <td className="px-4 py-2">{user.email || 'N/A'}</td>
-                  <td className="px-4 py-2">{user.mobileNumber || 'N/A'}</td>
-                  <td className="px-4 py-2">{user.gender || 'N/A'}</td>
+                  <td className="px-4 py-2">{user.name || "N/A"}</td>
+                  <td className="px-4 py-2">{user.email || "N/A"}</td>
+                  <td className="px-4 py-2">{user.mobileNumber || "N/A"}</td>
+                  <td className="px-4 py-2">{user.gender || "N/A"}</td>
                   <td className="px-4 border py-2">
                     <button
-                      onClick={() => handleStatusToggle(user._id)}
                       className={`px-3 py-1 rounded-md ${
-                        user.isEmailVerified ? 'bg-green-500' : 'bg-red-500'
+                        user.isEmailVerified ? "bg-green-500" : "bg-red-500"
                       } text-white`}
                     >
-                      {user.isEmailVerified ? 'Verified' : 'Not Verified'}
+                      {user.isEmailVerified ? "Verified" : "Not Verified"}
                     </button>
                   </td>
-                  <td className="px-4 py-2 flex space-x-2">
+                  <td className="px-4 relative py-2 flex space-x-2">
                     <button
                       onClick={() => handleEdit(user._id)}
                       className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
@@ -86,7 +92,18 @@ const UsersTable = ({ users = [] }) => {
                     >
                       <FaTrash />
                     </button>
-                    
+                    {/* this  is the code to send email verification reminder but may be  this is not feasible due to unavailability of domain */}
+                    {/* {!user.isEmailVerified && (
+                      <button
+                        onClick={() => sendReminderMessage(user.id)}
+                        className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 relative group"
+                      >
+                        <span className="hidden absolute top-[-30px] left-[-30px] overflow-hidden transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded-md group-hover:block whitespace-nowrap">
+                          Send verification reminder
+                        </span>
+                        <MdOutlineMessage />
+                      </button>
+                    )} */}
                   </td>
                 </tr>
               ))
@@ -126,7 +143,7 @@ const UsersTable = ({ users = [] }) => {
                           ))}
                         </ul>
                       ) : (
-                        'No courses'
+                        "No courses"
                       )}
                     </td>
                   </tr>
@@ -140,7 +157,7 @@ const UsersTable = ({ users = [] }) => {
                           ))}
                         </ul>
                       ) : (
-                        'No quizzes'
+                        "No quizzes"
                       )}
                     </td>
                   </tr>
@@ -154,7 +171,7 @@ const UsersTable = ({ users = [] }) => {
                           ))}
                         </ul>
                       ) : (
-                        'No linked cards'
+                        "No linked cards"
                       )}
                     </td>
                   </tr>

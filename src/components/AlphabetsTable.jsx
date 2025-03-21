@@ -1,17 +1,15 @@
 import React from "react";
-import {
-    AiOutlineEdit,
-    AiOutlineDelete,
-  } from "react-icons/ai";
+import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 
-const AlphabetTable = ({ data,handleEditAlphabet }) => {
-    
+const AlphabetTable = ({ data, handleEditAlphabet }) => {
+  console.log(data, "dataaaaa");
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-300">
         <thead className="bg-gray-200">
           <tr>
-            <th className="py-2 px-4 border">Alphabet</th>
+            <th className="py-2 px-4 border">#</th>
             <th className="py-2 px-4 border">Description</th>
             <th className="py-2 px-4 border">Examples</th>
             <th className="py-2 px-4 border">Image</th>
@@ -20,10 +18,17 @@ const AlphabetTable = ({ data,handleEditAlphabet }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {data?.map((item) => (
             <tr key={item._id} className="hover:bg-gray-100 ">
-              <td className="py-2 px-4 border text-center font-bold">{item.alphabet}</td>
-              <td className="py-2 px-4 border">{item.description}</td>
+              <td className="py-2 px-4 border text-center font-bold">
+                {item.alphabet}
+              </td>
+              <td className="py-2 px-4 border">
+                {item.description.length > 30
+                  ? item.description.substring(0, 30) + "..."
+                  : item.description}
+              </td>
+
               <td className="py-2 px-4 border">
                 {Array.isArray(item.examples)
                   ? item.examples.join(", ")
@@ -44,8 +49,11 @@ const AlphabetTable = ({ data,handleEditAlphabet }) => {
                   : item.relatedTerms}
               </td>
               <td className="py-2 flex cursor-pointer justify-center  items-center  px-4 border">
-                <AiOutlineEdit onClick={()=>handleEditAlphabet(item)} size={25}/>
-                <AiOutlineDelete size={25}/>
+                <AiOutlineEdit
+                  onClick={() => handleEditAlphabet(item)}
+                  size={25}
+                />
+                <AiOutlineDelete size={25} />
               </td>
             </tr>
           ))}
