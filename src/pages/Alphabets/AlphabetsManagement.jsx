@@ -46,47 +46,42 @@ const AlphabetsManagement = () => {
     try {
       setLoading(true);
       const formData = new FormData();
+  
       formData.append("alphabet", data.alphabet);
       formData.append("description", data.description);
-      formData.append("relatedTerms", data.relatedTerms);
-      formData.append("examples", data.examples);
-      
-      // For both create and edit, if a new image file is selected, append it.
-      if (data.image && data.image[0]) {
+      formData.append("relatedTerms", JSON.stringify(data.relatedTerms)); // Convert array to string
+      formData.append("examples", JSON.stringify(data.examples)); // Convert array to string
+  
+      if (data.image && Array.isArray(data.image) && data.image.length > 0) {
         formData.append("files", data.image[0]);
       }
-
+  
+      // Log FormData before sending
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+  
       let res;
       if (editAlphabet) {
-        // If editing, send a PATCH request.
         res = await axios.patch(
           `http://3.223.253.106:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
           formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+          { headers: { "Content-Type": "multipart/form-data" } }
         );
-        console.log(res)
         toast.success(res.data.message || "Alphabet updated successfully");
       } else {
-        // Creating new alphabet entry
         res = await axios.post(
           "http://3.223.253.106:3210/api/alphabet/create-alphabet",
           formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+          { headers: { "Content-Type": "multipart/form-data" } }
         );
         toast.success(res.data.message || "Alphabet created successfully");
       }
+  
       fetchAlphabets();
-      reset(); // Reset all form fields
       setEditAlphabet(null);
       setIsModalOpen(false);
+      reset();
     } catch (error) {
       console.error("Error creating/updating alphabet:", error);
       toast.error("Failed to save alphabet.");
@@ -94,6 +89,7 @@ const AlphabetsManagement = () => {
       setLoading(false);
     }
   };
+  
 
   // Open modal for creating new alphabet
   const handleAddAlphabet = () => {
