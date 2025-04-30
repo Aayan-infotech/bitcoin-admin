@@ -20,7 +20,7 @@ const UsersTable = ({ users = [] }) => {
   const sendReminderMessage = async (userId) => {
     try {
       const res = await axios.post(
-        `http://3.223.253.106:3210/api/user/verification-reminder/${userId}`
+        `http://localhost:3210/api/user/verification-reminder/${userId}`
       );
       console.log(res);
       toast.success("Reminder Sent successfully!");
@@ -92,18 +92,6 @@ const UsersTable = ({ users = [] }) => {
                     >
                       <FaTrash />
                     </button>
-                    {/* this  is the code to send email verification reminder but may be  this is not feasible due to unavailability of domain */}
-                    {/* {!user.isEmailVerified && (
-                      <button
-                        onClick={() => sendReminderMessage(user.id)}
-                        className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 relative group"
-                      >
-                        <span className="hidden absolute top-[-30px] left-[-30px] overflow-hidden transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded-md group-hover:block whitespace-nowrap">
-                          Send verification reminder
-                        </span>
-                        <MdOutlineMessage />
-                      </button>
-                    )} */}
                   </td>
                 </tr>
               ))

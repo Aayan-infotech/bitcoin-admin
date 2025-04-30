@@ -26,7 +26,7 @@ const AlphabetsManagement = () => {
   const fetchAlphabets = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://3.223.253.106:3210/api/alphabet/get-all-alphabet"
+        "http://localhost:3210/api/alphabet/get-all-alphabet"
       );
       console.log(response)
       setAlphabets(response?.data?.data);
@@ -64,14 +64,14 @@ const AlphabetsManagement = () => {
       let res;
       if (editAlphabet) {
         res = await axios.patch(
-          `http://3.223.253.106:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
+          `http://localhost:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
         toast.success(res.data.message || "Alphabet updated successfully");
       } else {
         res = await axios.post(
-          "http://3.223.253.106:3210/api/alphabet/create-alphabet",
+          "http://localhost:3210/api/alphabet/create-alphabet",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -99,11 +99,8 @@ const AlphabetsManagement = () => {
     toast.info("Creating a new alphabet.");
   };
 
-  // Open modal for editing an alphabet
   const handleEditAlphabet = (alphabetData) => {
     setEditAlphabet(alphabetData);
-    // Pre-fill the form with existing data.
-    // You may want to convert arrays to comma-separated strings if needed.
     reset({
       alphabet: alphabetData.alphabet,
       description: alphabetData.description,

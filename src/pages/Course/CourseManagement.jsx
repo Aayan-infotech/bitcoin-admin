@@ -14,6 +14,7 @@ const CourseManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState("Draft");
   const [editCourse, setEditCourse] = useState(null);
+  const [courseImage, setCourseImage] = useState(null);
 
   const {
     register,
@@ -22,19 +23,17 @@ const CourseManagement = () => {
     formState: { errors },
   } = useForm();
 
-  // Fetch courses with optimization
   const fetchCourses = useCallback(async () => {
     try {
       toast.dismiss();
       const response = await axios.get(
-        "http://3.223.253.106:3210/api/course/get-all-courses"
+        "http://localhost:3210/api/course/get-all-courses"
       );
       const fetchedCourses = response.data.data;
-      // Update state only if the fetched courses are different
       if (JSON.stringify(fetchedCourses) !== JSON.stringify(courses)) {
         setCourses(fetchedCourses);
       }
-      toast.success(response.data.message||"Courses fetched Successfully")
+      toast.success(response.data.message || "Courses fetched successfully");
     } catch (error) {
       console.error("Error fetching courses:", error);
       toast.error("Failed to fetch courses.");
@@ -45,7 +44,6 @@ const CourseManagement = () => {
     fetchCourses();
   }, [fetchCourses]);
 
-  // OnSubmit handler
   const onSubmit = async (data) => {
     try {
       const token = localStorage.getItem("token");
@@ -55,31 +53,46 @@ const CourseManagement = () => {
         },
       };
 
+      const formData = new FormData();
+      formData.append("courseName", data.courseName);
+      formData.append("courseDescription", data.courseDescription);
+      formData.append("status", status);
+      if (courseImage) {
+        formData.append("files", courseImage);
+      }
+
       let response;
       if (editCourse) {
         response = await axios.patch(
-          `http://3.223.253.106:3210/api/course/update-course/${editCourse._id}`,
+          `http://localhost:3210/api/course/update-course/${editCourse._id}`,
+          formData,
           {
-            ...data,
-            status,
-          },
-          config
+            ...config,
+            headers: {
+              ...config.headers,
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         toast.success("Course updated successfully");
       } else {
         response = await axios.post(
-          "http://3.223.253.106:3210/api/course/create-course",
+          "http://localhost:3210/api/course/create-course",
+          formData,
           {
-            ...data,
-            status,
-          },
-          config
+            ...config,
+            headers: {
+              ...config.headers,
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         toast.success("Course created successfully");
       }
 
       if (response.data.success) {
         reset();
+        setCourseImage(null);
         setIsModalOpen(false);
         fetchCourses();
       } else {
@@ -91,12 +104,11 @@ const CourseManagement = () => {
     }
   };
 
-  // Handle course status update
   const handleStatusUpdate = useCallback(
     async (id, courseStatus) => {
       try {
         const res = await axios.patch(
-          `http://3.223.253.106:3210/api/course/update-course-status/${id}`,
+          `http://localhost:3210/api/course/update-course-status/${id}`,
           { courseStatus }
         );
         toast.success(`Course ${id} status updated to ${courseStatus}`);
@@ -108,20 +120,20 @@ const CourseManagement = () => {
     },
     [fetchCourses]
   );
+
   const handleDeletCourse = async (courseId) => {
-    console.log(courseId)
     try {
       await axios.delete(
-        `http://3.223.253.106:3210/api/course/delete-course/${courseId}`
+        `http://localhost:3210/api/course/delete-course/${courseId}`
       );
       setCourses(courses.filter((course) => course._id !== courseId));
-      toast.success("Section Deleted Successfully");
+      toast.success("Course deleted successfully");
     } catch (error) {
-      console.error("Error deleting section:", error);
+      console.error("Error deleting course:", error);
+      toast.error("Error deleting course.");
     }
   };
 
-  // Handle editing a course
   const onEdit = useCallback(
     (course) => {
       setEditCourse(course);
@@ -132,16 +144,14 @@ const CourseManagement = () => {
     [reset]
   );
 
-  // Handle view sections
   const handleViewSections = (course) => {
     navigate(`/courses/${course._id}/sections`);
   };
 
-  // Delete a course
   const onDelete = useCallback(
     async (courseId) => {
       try {
-        await axios.delete(`http://3.223.253.106:3210/api/course/${courseId}`);
+        await axios.delete(`http://localhost:3210/api/course/${courseId}`);
         toast.success("Course deleted successfully");
         fetchCourses();
       } catch (error) {
@@ -152,9 +162,9 @@ const CourseManagement = () => {
     [fetchCourses]
   );
 
-  // Handle modal close
   const handleModalFalse = () => {
     reset({ courseName: "", courseDescription: "" });
+    setCourseImage(null);
     setIsModalOpen(false);
     setEditCourse(null);
     toast.success("Modal closed successfully.");
@@ -227,6 +237,23 @@ const CourseManagement = () => {
                   <p className="text-red-500 text-sm">
                     {errors.courseDescription.message}
                   </p>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label className="block mb-1 font-semibold">Course Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCourseImage(e.target.files[0])}
+                  className="w-full p-2 border rounded"
+                />
+                {courseImage && (
+                  <img
+                    src={URL.createObjectURL(courseImage)}
+                    alt="Preview"
+                    className="mt-2 w-32 h-32 object-cover rounded"
+                  />
                 )}
               </div>
 

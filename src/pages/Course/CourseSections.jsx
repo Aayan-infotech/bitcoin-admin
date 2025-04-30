@@ -33,7 +33,7 @@ const CourseSections = () => {
   const fetchSections = async () => {
     try {
       const res = await axios.get(
-        `http://3.223.253.106:3210/api/course/get-course-details/${courseId}`
+        `http://localhost:3210/api/course/get-course-details/${courseId}`
       );
       console.log(res.data);
       if (res.data.success) {
@@ -53,8 +53,8 @@ const CourseSections = () => {
   const handleAddOrUpdateSection = async () => {
     setLoading(true);
     const url = editingSectionId
-      ? `http://3.223.253.106:3210/api/course/update-section/${editingSectionId}`
-      : `http://3.223.253.106:3210/api/course/create-section`;
+      ? `http://localhost:3210/api/course/update-section/${editingSectionId}`
+      : `http://localhost:3210/api/course/create-section`;
     try {
       const formData = new FormData();
       const method = editingSectionId ? "patch" : "post";
@@ -92,7 +92,7 @@ const CourseSections = () => {
   const handleDeleteSection = async (sectionId) => {
     try {
       await axios.delete(
-        `http://3.223.253.106:3210/api/course/delete-section/${sectionId}`
+        `http://localhost:3210/api/course/delete-section/${sectionId}`
       );
       setSections(sections.filter((section) => section._id !== sectionId));
       toast.success("Section Deleted Successfully");
