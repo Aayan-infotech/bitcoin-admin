@@ -24,7 +24,7 @@ const FAQ = () => {
     try {
       toast.dismiss();
       const faqData = await axios.get(
-        "http://localhost:3210/api/faq/get-all-faqs"
+        "http://18.209.91.97:3210/api/faq/get-all-faqs"
       );
       console.log(faqData.data.faqs);
       setFAQs(faqData.data.faqs);
@@ -45,7 +45,7 @@ const FAQ = () => {
       if (editFAQ) {
         console.log("Editing FAQ:", editFAQ);
         const res = await axios.patch(
-          `http://localhost:3210/api/faq/update-faq/${editFAQ._id}`,
+          `http://18.209.91.97:3210/api/faq/update-faq/${editFAQ._id}`,
           data
         );
         console.log(res);
@@ -53,7 +53,7 @@ const FAQ = () => {
       } else {
         console.log("Creating FAQ with data:", data);
         const res = await axios.post(
-          "http://localhost:3210/api/faq/create-faq",
+          "http://18.209.91.97:3210/api/faq/create-faq",
           data
         );
         console.log(res);

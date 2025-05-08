@@ -1,13 +1,11 @@
 import React from "react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { FiCreditCard } from "react-icons/fi";
-import { BsCurrencyDollar, BsShield, } from "react-icons/bs";
+import { BsCurrencyDollar, BsShield } from "react-icons/bs";
 import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { IoMdContacts } from "react-icons/io";
-import { SiCoursera } from "react-icons/si";
-import { RiContactsLine,RiQuestionAnswerFill } from "react-icons/ri";
-
-
+import { SiCoursera, SiMessenger } from "react-icons/si";
+import { RiContactsLine, RiQuestionAnswerFill } from "react-icons/ri";
 
 export const links = [
   {
@@ -16,32 +14,33 @@ export const links = [
       {
         name: "User Management",
         icon: <RiContactsLine />,
-        path:""
+        path: "",
       },
       {
         name: "Course Management",
         icon: <SiCoursera />,
-        path:"course-management"
+        path: "course-management",
       },
       {
         name: "Quiz Management",
         icon: <RiQuestionAnswerFill />,
-        path:"quiz-management"
-
+        path: "quiz-management",
       },
       {
         name: "Alphabet Management",
         icon: <TiSortAlphabeticallyOutline />,
-        path:"alphabet-management"
-
+        path: "alphabet-management",
+      },
+      {
+        name: "Notification Management",
+        icon: <SiMessenger />,
+        path: "Notification-management",
       },
       {
         name: "FAQs",
         icon: <IoMdContacts />,
-        path:"faq-management"
-
+        path: "faq-management",
       },
-     
     ],
   },
 ];

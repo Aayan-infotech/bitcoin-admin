@@ -16,7 +16,7 @@ const FAQAccordion = ({ faqs, handleEditFAQ ,fetchFAQs}) => {
 
   const handleFaqDelete=(async(faq)=>{
    try {
-    const res=await axios.delete(`http://localhost:3210/api/faq/delete-faq/${faq._id}`)
+    const res=await axios.delete(`http://18.209.91.97:3210/api/faq/delete-faq/${faq._id}`)
     toast.success(res?.data?.message)
     fetchFAQs()
    } catch (error) {

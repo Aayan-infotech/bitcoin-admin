@@ -20,7 +20,7 @@ const UsersTable = ({ users = [] }) => {
   const sendReminderMessage = async (userId) => {
     try {
       const res = await axios.post(
-        `http://localhost:3210/api/user/verification-reminder/${userId}`
+        `http://18.209.91.97:3210/api/user/verification-reminder/${userId}`
       );
       console.log(res);
       toast.success("Reminder Sent successfully!");

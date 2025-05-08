@@ -41,7 +41,7 @@ pipeline {
                         sonarsource/sonar-scanner-cli:latest \
                         -Dsonar.projectKey=bitcoin-admin \
                         -Dsonar.sources=/usr/src \
-                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.host.url=http://18.209.91.97:9000 \
                         -Dsonar.login=${SONARTOKEN}
                     '''
                 }

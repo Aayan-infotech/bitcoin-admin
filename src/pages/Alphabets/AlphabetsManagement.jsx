@@ -26,7 +26,7 @@ const AlphabetsManagement = () => {
   const fetchAlphabets = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3210/api/alphabet/get-all-alphabet"
+        "http://18.209.91.97:3210/api/alphabet/get-all-alphabet"
       );
       console.log(response)
       setAlphabets(response?.data?.data);
@@ -64,14 +64,14 @@ const AlphabetsManagement = () => {
       let res;
       if (editAlphabet) {
         res = await axios.patch(
-          `http://localhost:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
+          `http://18.209.91.97:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
         toast.success(res.data.message || "Alphabet updated successfully");
       } else {
         res = await axios.post(
-          "http://localhost:3210/api/alphabet/create-alphabet",
+          "http://18.209.91.97:3210/api/alphabet/create-alphabet",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );

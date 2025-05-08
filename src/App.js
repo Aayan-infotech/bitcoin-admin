@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { FiSettings } from "react-icons/fi";
 import { useStateContext } from "./contexts/ContextProvider";
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
-import ThemeSettings from "./components/ThemeSettings";
-import Footer from "./components/Footer";
-import Login from "./components/Login";
-import CourseCreation from "./pages/Course/CourseManagement";
-import CourseSections from "./pages/Course/CourseSections";
-import QuizManagement from "./pages/Quiz/QuizManagement";
-import QuizQuestionsManagement from "./pages/Quiz/QuizQuestionsManagement";
-import FAQ from "./pages/FAQ/FAQ";
-import UserManagement from "./pages/User/UserManagement";
-import AlphabetsManagement from "./pages/Alphabets/AlphabetsManagement";
+
+// Lazy imports
+const Navbar = React.lazy(() => import("./components/Navbar"));
+const Sidebar = React.lazy(() => import("./components/Sidebar"));
+const ThemeSettings = React.lazy(() => import("./components/ThemeSettings"));
+const Footer = React.lazy(() => import("./components/Footer"));
+const Login = React.lazy(() => import("./components/Login"));
+const CourseCreation = React.lazy(() => import("./pages/Course/CourseManagement"));
+const CourseSections = React.lazy(() => import("./pages/Course/CourseSections"));
+const QuizManagement = React.lazy(() => import("./pages/Quiz/QuizManagement"));
+const QuizQuestionsManagement = React.lazy(() => import("./pages/Quiz/QuizQuestionsManagement"));
+const FAQ = React.lazy(() => import("./pages/FAQ/FAQ"));
+const UserManagement = React.lazy(() => import("./pages/User/UserManagement"));
+const AlphabetsManagement = React.lazy(() => import("./pages/Alphabets/AlphabetsManagement"));
+const NotificationManagement = React.lazy(() => import("./pages/Notification/NotificationManagement"));
 
 const App = () => {
   const {
@@ -61,58 +64,61 @@ const App = () => {
   return (
     <div className={currentMode === "Dark" ? "dark" : ""}>
       <BrowserRouter>
-        {!isLoggedIn ? (
-          <Routes>
-            <Route path="/*" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-          </Routes>
-        ) : (
-          <div className="flex relative dark:bg-gray-900">
-            <div className="fixed right-4 bottom-4 z-50">
-              <button
-                onClick={() => setThemeSettings(true)}
-                style={{ backgroundColor: currentColor }}
-                className="p-3 text-white rounded-full shadow-lg"
+        <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
+          {!isLoggedIn ? (
+            <Routes>
+              <Route path="/*" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+            </Routes>
+          ) : (
+            <div className="flex relative dark:bg-gray-900">
+              <div className="fixed right-4 bottom-4 z-50">
+                <button
+                  onClick={() => setThemeSettings(true)}
+                  style={{ backgroundColor: currentColor }}
+                  className="p-3 text-white rounded-full shadow-lg"
+                >
+                  <FiSettings size={24} />
+                </button>
+              </div>
+
+              {activeMenu ? (
+                <div className="w-72 fixed bg-white dark:bg-gray-800 z-10">
+                  <Sidebar />
+                </div>
+              ) : (
+                <div className="w-0">
+                  <Sidebar />
+                </div>
+              )}
+
+              <div
+                className={
+                  activeMenu
+                    ? "bg-gray-100 dark:bg-gray-900 min-h-screen md:ml-72 w-full"
+                    : "w-full min-h-screen"
+                }
               >
-                <FiSettings size={24} />
-              </button>
-            </div>
+                <Navbar />
+                {themeSettings && <ThemeSettings />}
 
-            {activeMenu ? (
-              <div className="w-72 fixed bg-white dark:bg-gray-800 z-10">
-                <Sidebar />
+                <Routes>
+                  <Route path="/" element={<UserManagement />} />
+                  <Route path="/user-management" element={<UserManagement />} />
+                  <Route path="/course-management" element={<CourseCreation />} />
+                  <Route path="/courses/:courseId/sections" element={<CourseSections />} />
+                  <Route path="/quiz-management" element={<QuizManagement />} />
+                  <Route path="/quiz/:quizId/questions" element={<QuizQuestionsManagement />} />
+                  <Route path="/faq-management" element={<FAQ />} />
+                  <Route path="/alphabet-management" element={<AlphabetsManagement />} />
+                  <Route path="/notification-management" element={<NotificationManagement />} />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+
+                <Footer />
               </div>
-            ) : (
-              <div className="w-0">
-                <Sidebar />
-              </div>
-            )}
-
-            <div
-              className={
-                activeMenu
-                  ? "bg-gray-100 dark:bg-gray-900 min-h-screen md:ml-72 w-full"
-                  : "w-full min-h-screen"
-              }
-            >
-              <Navbar />
-              {themeSettings && <ThemeSettings />}
-
-              <Routes>
-                <Route path="/" element={<UserManagement />} />
-                <Route path="/user-management" element={<UserManagement />} />
-                <Route path="/course-management" element={<CourseCreation />} />
-                <Route path="/courses/:courseId/sections" element={<CourseSections />} />
-                <Route path="/quiz-management" element={<QuizManagement />} />
-                <Route path="/quiz/:quizId/questions" element={<QuizQuestionsManagement />} />
-                <Route path="/faq-management" element={<FAQ />} />
-                <Route path="/alphabet-management" element={<AlphabetsManagement />} />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-
-              <Footer />
             </div>
-          </div>
-        )}
+          )}
+        </Suspense>
       </BrowserRouter>
       <Toaster />
     </div>

@@ -23,7 +23,7 @@ const UserManagement = () => {
   const fetchUsers = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3210/api/user/get-all-user"
+        "http://18.209.91.97:3210/api/user/get-all-user"
       );
       toast.success(response.data.message);
       setUsers(response.data.users);
@@ -42,7 +42,7 @@ const UserManagement = () => {
     async (id, Userstatus) => {
       try {
         const res = await axios.patch(
-          `http://localhost:3210/api/course/update-course-status/${id}`,
+          `http://18.209.91.97:3210/api/course/update-course-status/${id}`,
           { Userstatus }
         );
         toast.success(`Course ${id} status updated to ${Userstatus}`);

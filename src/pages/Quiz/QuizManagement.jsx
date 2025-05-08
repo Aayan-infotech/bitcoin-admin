@@ -26,7 +26,7 @@ const QuizManagement = () => {
   const fetchQuizzes = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3210/api/quiz/get-all-quizzes"
+        "http://18.209.91.97:3210/api/quiz/get-all-quizzes"
       );
       toast.success(response.data.message);
       setQuizzes(response.data.quizzes);
@@ -51,13 +51,13 @@ const QuizManagement = () => {
       let response;
       if (editQuiz) {
         response = await axios.patch(
-          `http://localhost:3210/api/quiz/update-quiz/${editQuiz._id}`,
+          `http://18.209.91.97:3210/api/quiz/update-quiz/${editQuiz._id}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
       } else {
         response = await axios.post(
-          "http://localhost:3210/api/quiz/create-quiz",
+          "http://18.209.91.97:3210/api/quiz/create-quiz",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -95,7 +95,7 @@ const QuizManagement = () => {
   const onDelete = async (quizId) => {
     try {
       await axios.delete(
-        `http://localhost:3210/api/quiz/delete-quiz/${quizId}`
+        `http://18.209.91.97:3210/api/quiz/delete-quiz/${quizId}`
       );
       toast.success("Quiz deleted successfully");
       fetchQuizzes();

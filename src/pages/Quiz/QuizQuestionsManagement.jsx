@@ -25,7 +25,7 @@ const QuizQuestionsManagement = () => {
     try {
       console.log("Fetching quiz data for Quiz ID:", quizId);
       const response = await axios.get(
-        `http://localhost:3210/api/quiz/get-quizById/${quizId}`
+        `http://18.209.91.97:3210/api/quiz/get-quizById/${quizId}`
       );
       setSections(response.data.quiz); // Assuming quiz contains questions
     } catch (error) {
@@ -59,7 +59,7 @@ const QuizQuestionsManagement = () => {
     try {
       console.log(questionId);
       const res = await axios.delete(
-        "http://localhost:3210/api/quiz/delete-question",
+        "http://18.209.91.97:3210/api/quiz/delete-question",
         { data: { questionId } } 
       );
       if (res.data.message) {
@@ -85,14 +85,14 @@ const QuizQuestionsManagement = () => {
       if (editQuestion) {
         // Editing an existing question
         await axios.patch(
-          `http://localhost:3210/api/quiz/update-question/${editQuestion._id}`,
+          `http://18.209.91.97:3210/api/quiz/update-question/${editQuestion._id}`,
           updatedQuestion
         );
         toast.success("Question updated successfully");
       } else {
         // Adding a new question
         await axios.post(
-          `http://localhost:3210/api/quiz/add-question/${quizId}`,
+          `http://18.209.91.97:3210/api/quiz/add-question/${quizId}`,
           {questions:[updatedQuestion]}
         );
         toast.success("Question added successfully");

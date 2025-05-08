@@ -12,7 +12,7 @@ const Login = ({ setIsLoggedIn }) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:3210/api/auth/login", {
+      const res = await axios.post("http://18.209.91.97:3210/api/auth/login", {
         email,
         password,
       });
