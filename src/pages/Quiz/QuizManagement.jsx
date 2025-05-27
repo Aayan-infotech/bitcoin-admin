@@ -6,6 +6,7 @@ import { useStateContext } from "../../contexts/ContextProvider";
 import toast from "react-hot-toast";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { MdOutlineQuiz } from "react-icons/md";
+import { API_BASE_URL } from "../../data/constants";
 
 const QuizManagement = () => {
   const { currentColor } = useStateContext();
@@ -26,7 +27,7 @@ const QuizManagement = () => {
   const fetchQuizzes = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://18.209.91.97:3210/api/quiz/get-all-quizzes"
+        `${API_BASE_URL}/quiz/get-all-quizzes`
       );
       toast.success(response.data.message);
       setQuizzes(response.data.quizzes);
@@ -51,13 +52,13 @@ const QuizManagement = () => {
       let response;
       if (editQuiz) {
         response = await axios.patch(
-          `http://18.209.91.97:3210/api/quiz/update-quiz/${editQuiz._id}`,
+          `${API_BASE_URL}/quiz/update-quiz/${editQuiz._id}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
       } else {
         response = await axios.post(
-          "http://18.209.91.97:3210/api/quiz/create-quiz",
+          `${API_BASE_URL}/quiz/create-quiz`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -95,7 +96,7 @@ const QuizManagement = () => {
   const onDelete = async (quizId) => {
     try {
       await axios.delete(
-        `http://18.209.91.97:3210/api/quiz/delete-quiz/${quizId}`
+        `${API_BASE_URL}/quiz/delete-quiz/${quizId}`
       );
       toast.success("Quiz deleted successfully");
       fetchQuizzes();

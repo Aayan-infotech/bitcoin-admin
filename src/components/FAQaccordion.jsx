@@ -5,6 +5,7 @@ import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { useStateContext } from "../contexts/ContextProvider";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../data/constants";
 
 const FAQAccordion = ({ faqs, handleEditFAQ ,fetchFAQs}) => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -16,7 +17,7 @@ const FAQAccordion = ({ faqs, handleEditFAQ ,fetchFAQs}) => {
 
   const handleFaqDelete=(async(faq)=>{
    try {
-    const res=await axios.delete(`http://18.209.91.97:3210/api/faq/delete-faq/${faq._id}`)
+    const res=await axios.delete(`${API_BASE_URL}/faq/delete-faq/${faq._id}`)
     toast.success(res?.data?.message)
     fetchFAQs()
    } catch (error) {

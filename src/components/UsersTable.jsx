@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa"; // Importing CRUD icons
 import { MdOutlineMessage } from "react-icons/md";
+import { API_BASE_URL } from "../data/constants";
 
 const UsersTable = ({ users = [] }) => {
   const [userData, setUserData] = useState(users || []);
@@ -20,7 +21,7 @@ const UsersTable = ({ users = [] }) => {
   const sendReminderMessage = async (userId) => {
     try {
       const res = await axios.post(
-        `http://18.209.91.97:3210/api/user/verification-reminder/${userId}`
+        `${API_BASE_URL}/user/verification-reminder/${userId}`
       );
       console.log(res);
       toast.success("Reminder Sent successfully!");

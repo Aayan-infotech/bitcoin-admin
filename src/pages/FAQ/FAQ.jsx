@@ -4,6 +4,7 @@ import axios from "axios";
 import { useStateContext } from "../../contexts/ContextProvider";
 import FAQaccordion from "../../components/FAQaccordion";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../../data/constants";
 
 const FAQ = () => {
   const { currentColor } = useStateContext();
@@ -24,7 +25,7 @@ const FAQ = () => {
     try {
       toast.dismiss();
       const faqData = await axios.get(
-        "http://18.209.91.97:3210/api/faq/get-all-faqs"
+        `${API_BASE_URL}/faq/get-all-faqs`
       );
       console.log(faqData.data.faqs);
       setFAQs(faqData.data.faqs);
@@ -45,7 +46,7 @@ const FAQ = () => {
       if (editFAQ) {
         console.log("Editing FAQ:", editFAQ);
         const res = await axios.patch(
-          `http://18.209.91.97:3210/api/faq/update-faq/${editFAQ._id}`,
+          `${API_BASE_URL}/faq/update-faq/${editFAQ._id}`,
           data
         );
         console.log(res);
@@ -53,7 +54,7 @@ const FAQ = () => {
       } else {
         console.log("Creating FAQ with data:", data);
         const res = await axios.post(
-          "http://18.209.91.97:3210/api/faq/create-faq",
+          `${API_BASE_URL}/faq/create-faq`,
           data
         );
         console.log(res);

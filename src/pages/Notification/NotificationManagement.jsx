@@ -4,6 +4,7 @@ import { useStateContext } from "../../contexts/ContextProvider";
 import axios from "axios";
 import toast from "react-hot-toast";
 import NotificationTable from "../../components/NotificationTable";
+import { API_BASE_URL } from "../../data/constants";
 
 const NotificationModal = ({
   isOpen,
@@ -77,7 +78,7 @@ const NotificationManagement = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://18.209.91.97:3210/api/notification/all-notification"
+        `${API_BASE_URL}/notification/all-notification`
       );
       setNotifications(response?.data?.data || []);
     } catch (error) {
@@ -91,7 +92,7 @@ const NotificationManagement = () => {
   const fetchUsers = useCallback(async () => {
     try {
       const res = await axios.get(
-        "http://18.209.91.97:3210/api/user/get-all-notification-user",
+        `${API_BASE_URL}/user/get-all-notification-user`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -117,7 +118,7 @@ const NotificationManagement = () => {
 
     try {
       await axios.post(
-        "http://18.209.91.97:3210/api/notification/create-notification",
+        `${API_BASE_URL}/notification/create-notification`,
         { message, targetUserId: targetUserId || undefined },
         {
           headers: {

@@ -8,6 +8,7 @@ import {
   AiOutlineDelete,
   AiOutlineLoading3Quarters,
 } from "react-icons/ai";
+import { API_BASE_URL } from "../../data/constants";
 
 const CourseSections = () => {
   const { currentColor } = useStateContext();
@@ -33,7 +34,7 @@ const CourseSections = () => {
   const fetchSections = async () => {
     try {
       const res = await axios.get(
-        `http://18.209.91.97:3210/api/course/get-course-details/${courseId}`
+        `${API_BASE_URL}/course/get-course-details/${courseId}`
       );
       console.log(res.data);
       if (res.data.success) {
@@ -53,8 +54,8 @@ const CourseSections = () => {
   const handleAddOrUpdateSection = async () => {
     setLoading(true);
     const url = editingSectionId
-      ? `http://18.209.91.97:3210/api/course/update-section/${editingSectionId}`
-      : `http://18.209.91.97:3210/api/course/create-section`;
+      ? `${API_BASE_URL}/course/update-section/${editingSectionId}`
+      : `${API_BASE_URL}/course/create-section`;
     try {
       const formData = new FormData();
       const method = editingSectionId ? "patch" : "post";
@@ -92,7 +93,7 @@ const CourseSections = () => {
   const handleDeleteSection = async (sectionId) => {
     try {
       await axios.delete(
-        `http://18.209.91.97:3210/api/course/delete-section/${sectionId}`
+        `${API_BASE_URL}/course/delete-section/${sectionId}`
       );
       setSections(sections.filter((section) => section._id !== sectionId));
       toast.success("Section Deleted Successfully");

@@ -6,6 +6,7 @@ import axios from "axios";
 import CourseDisplay from "../../components/CourseDisplay";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../../data/constants";
 
 const CourseManagement = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const CourseManagement = () => {
     try {
       toast.dismiss();
       const response = await axios.get(
-        "http://18.209.91.97:3210/api/course/get-all-courses"
+        `${API_BASE_URL}/course/get-all-courses`
       );
       const fetchedCourses = response.data.data;
       if (JSON.stringify(fetchedCourses) !== JSON.stringify(courses)) {
@@ -64,7 +65,7 @@ const CourseManagement = () => {
       let response;
       if (editCourse) {
         response = await axios.patch(
-          `http://18.209.91.97:3210/api/course/update-course/${editCourse._id}`,
+          `${API_BASE_URL}/course/update-course/${editCourse._id}`,
           formData,
           {
             ...config,
@@ -77,7 +78,7 @@ const CourseManagement = () => {
         toast.success("Course updated successfully");
       } else {
         response = await axios.post(
-          "http://18.209.91.97:3210/api/course/create-course",
+          `${API_BASE_URL}/course/create-course`,
           formData,
           {
             ...config,
@@ -108,7 +109,7 @@ const CourseManagement = () => {
     async (id, courseStatus) => {
       try {
         const res = await axios.patch(
-          `http://18.209.91.97:3210/api/course/update-course-status/${id}`,
+          `${API_BASE_URL}/course/update-course-status/${id}`,
           { courseStatus }
         );
         toast.success(`Course ${id} status updated to ${courseStatus}`);
@@ -124,7 +125,7 @@ const CourseManagement = () => {
   const handleDeletCourse = async (courseId) => {
     try {
       await axios.delete(
-        `http://18.209.91.97:3210/api/course/delete-course/${courseId}`
+        `${API_BASE_URL}/course/delete-course/${courseId}`
       );
       setCourses(courses.filter((course) => course._id !== courseId));
       toast.success("Course deleted successfully");
@@ -151,7 +152,7 @@ const CourseManagement = () => {
   const onDelete = useCallback(
     async (courseId) => {
       try {
-        await axios.delete(`http://18.209.91.97:3210/api/course/${courseId}`);
+        await axios.delete(`${API_BASE_URL}/course/${courseId}`);
         toast.success("Course deleted successfully");
         fetchCourses();
       } catch (error) {

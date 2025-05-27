@@ -5,7 +5,7 @@ import { BsCurrencyDollar, BsShield } from "react-icons/bs";
 import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { IoMdContacts } from "react-icons/io";
 import { SiCoursera, SiMessenger } from "react-icons/si";
-import { RiContactsLine, RiQuestionAnswerFill } from "react-icons/ri";
+import { RiContactsLine, RiQuestionAnswerFill,RiPaypalFill } from "react-icons/ri";
 
 export const links = [
   {
@@ -25,6 +25,11 @@ export const links = [
         name: "Quiz Management",
         icon: <RiQuestionAnswerFill />,
         path: "quiz-management",
+      },
+      {
+        name: "Payment Management",
+        icon: <RiPaypalFill />,
+        path: "payment-management",
       },
       {
         name: "Alphabet Management",

@@ -18,6 +18,7 @@ const FAQ = React.lazy(() => import("./pages/FAQ/FAQ"));
 const UserManagement = React.lazy(() => import("./pages/User/UserManagement"));
 const AlphabetsManagement = React.lazy(() => import("./pages/Alphabets/AlphabetsManagement"));
 const NotificationManagement = React.lazy(() => import("./pages/Notification/NotificationManagement"));
+const PaymentManagement = React.lazy(() => import("./pages/Payment/PaymentManagement"));
 
 const App = () => {
   const {
@@ -111,6 +112,7 @@ const App = () => {
                   <Route path="/faq-management" element={<FAQ />} />
                   <Route path="/alphabet-management" element={<AlphabetsManagement />} />
                   <Route path="/notification-management" element={<NotificationManagement />} />
+                  <Route path="/payment-management" element={<PaymentManagement />} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
 

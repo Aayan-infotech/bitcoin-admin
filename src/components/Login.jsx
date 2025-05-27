@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast"; // Use toast for better feedback
+import { API_BASE_URL } from "../data/constants";
 
 const Login = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
@@ -12,13 +13,13 @@ const Login = ({ setIsLoggedIn }) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://18.209.91.97:3210/api/auth/login", {
+      const res = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,
       });
 
       console.log(res);
-      if (res?.data?.user?.userType !== "Admin") {
+      if (res?.data?.user?.accountType !== "Admin") {
         toast.error("Please Login with correct credentials");
         return;
       }
@@ -41,7 +42,7 @@ const Login = ({ setIsLoggedIn }) => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error.response.data.message);
+      // toast.error(error.response.data.message);
     }
   };
 

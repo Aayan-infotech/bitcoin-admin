@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AlphabetTable from "../../components/AlphabetsTable";
+import { API_BASE_URL } from "../../data/constants";
 
 const AlphabetsManagement = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const AlphabetsManagement = () => {
   const fetchAlphabets = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://18.209.91.97:3210/api/alphabet/get-all-alphabet"
+        `${API_BASE_URL}/alphabet/get-all-alphabet`
       );
       console.log(response)
       setAlphabets(response?.data?.data);
@@ -64,14 +65,14 @@ const AlphabetsManagement = () => {
       let res;
       if (editAlphabet) {
         res = await axios.patch(
-          `http://18.209.91.97:3210/api/alphabet/update-alphabet/${editAlphabet._id}`,
+          `${API_BASE_URL}/alphabet/update-alphabet/${editAlphabet._id}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
         toast.success(res.data.message || "Alphabet updated successfully");
       } else {
         res = await axios.post(
-          "http://18.209.91.97:3210/api/alphabet/create-alphabet",
+          `${API_BASE_URL}/alphabet/create-alphabet`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );

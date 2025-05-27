@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../../data/constants";
 
 const QuizQuestionsManagement = () => {
   const { currentColor } = useStateContext();
@@ -25,7 +26,7 @@ const QuizQuestionsManagement = () => {
     try {
       console.log("Fetching quiz data for Quiz ID:", quizId);
       const response = await axios.get(
-        `http://18.209.91.97:3210/api/quiz/get-quizById/${quizId}`
+        `${API_BASE_URL}/quiz/get-quizById/${quizId}`
       );
       setSections(response.data.quiz); // Assuming quiz contains questions
     } catch (error) {
@@ -59,7 +60,7 @@ const QuizQuestionsManagement = () => {
     try {
       console.log(questionId);
       const res = await axios.delete(
-        "http://18.209.91.97:3210/api/quiz/delete-question",
+        `${API_BASE_URL}/quiz/delete-question`,
         { data: { questionId } } 
       );
       if (res.data.message) {
@@ -85,14 +86,14 @@ const QuizQuestionsManagement = () => {
       if (editQuestion) {
         // Editing an existing question
         await axios.patch(
-          `http://18.209.91.97:3210/api/quiz/update-question/${editQuestion._id}`,
+          `${API_BASE_URL}/quiz/update-question/${editQuestion._id}`,
           updatedQuestion
         );
         toast.success("Question updated successfully");
       } else {
         // Adding a new question
         await axios.post(
-          `http://18.209.91.97:3210/api/quiz/add-question/${quizId}`,
+          `${API_BASE_URL}/quiz/add-question/${quizId}`,
           {questions:[updatedQuestion]}
         );
         toast.success("Question added successfully");
