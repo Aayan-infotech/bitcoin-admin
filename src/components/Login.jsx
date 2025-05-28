@@ -19,7 +19,7 @@ const Login = ({ setIsLoggedIn }) => {
       });
 
       if (res?.data?.user?.accountType !== "Admin") {
-        toast.error("Please Login with correct credentials");
+        toast.error("Only Admin access this platform");
         return;
       }
       if (res?.data?.success) {
