@@ -19,7 +19,7 @@ const Login = ({ setIsLoggedIn }) => {
       });
 
       console.log(res);
-      if (res?.data?.user?.accountType !== "Admin") {
+      if (res?.data?.user?.accountType.toLowerCase() !== "Admin") {
         toast.error("Please Login with correct credentials");
         return;
       }
