@@ -9,16 +9,15 @@ const PaymentTable = ({ users = [] }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [coinAmount, setCoinAmount] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const userToken = localStorage.getItem("token");
 
   const fetchUser = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/user/get-all-user`);
       setUserData(res.data.users);
-      console.log(res.data);
     } catch (err) {
       toast.error("Failed to fetch user!");
-      console.error(err);
     }
   };
 
@@ -42,23 +41,19 @@ const PaymentTable = ({ users = [] }) => {
       toast.error("Enter a valid coin amount");
       return;
     }
-
     try {
-      console.log(selectedUser, "selected user");
-      const res = await axios.post(
+      setLoading(true);
+      await axios.post(
         `${API_BASE_URL}/payment/transfer`,
         { userId: selectedUser._id, amount: coinAmount },
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },a
-        }
+        { headers: { Authorization: `Bearer ${userToken}` } }
       );
       toast.success("Coins sent successfully!");
       closeModal();
     } catch (error) {
       toast.error("Failed to send coins");
-      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,7 +96,6 @@ const PaymentTable = ({ users = [] }) => {
         </table>
       </div>
 
-      {/* Modal */}
       {isModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[90%] max-w-md shadow-xl">
@@ -116,7 +110,7 @@ const PaymentTable = ({ users = [] }) => {
               type="number"
               value={coinAmount}
               onChange={(e) => setCoinAmount(e.target.value)}
-              onWheel={(e) => e.target.blur()} // 👈 Prevent scroll increment
+              onWheel={(e) => e.target.blur()}
               placeholder="Enter coin amount"
               className="mt-4 w-full p-2 border rounded"
             />
@@ -125,14 +119,16 @@ const PaymentTable = ({ users = [] }) => {
               <button
                 onClick={closeModal}
                 className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded"
+                disabled={loading}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSendCoins}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                disabled={loading}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center justify-center min-w-[80px]"
               >
-                Send
+                {loading ? "Sending..." : "Send"}
               </button>
             </div>
           </div>
