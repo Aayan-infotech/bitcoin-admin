@@ -32,6 +32,11 @@ export const links = [
         path: "payment-management",
       },
       {
+        name: "Claim requests Manage...",
+        icon: <RiPaypalFill />,
+        path: "claims-management",
+      },
+      {
         name: "Alphabet Management",
         icon: <TiSortAlphabeticallyOutline />,
         path: "alphabet-management",

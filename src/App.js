@@ -19,6 +19,7 @@ const UserManagement = React.lazy(() => import("./pages/User/UserManagement"));
 const AlphabetsManagement = React.lazy(() => import("./pages/Alphabets/AlphabetsManagement"));
 const NotificationManagement = React.lazy(() => import("./pages/Notification/NotificationManagement"));
 const PaymentManagement = React.lazy(() => import("./pages/Payment/PaymentManagement"));
+const ClaimRewardTable = React.lazy(() => import("./pages/Payment/RewardClaimtable"));
 
 const App = () => {
   const {
@@ -113,6 +114,7 @@ const App = () => {
                   <Route path="/alphabet-management" element={<AlphabetsManagement />} />
                   <Route path="/notification-management" element={<NotificationManagement />} />
                   <Route path="/payment-management" element={<PaymentManagement />} />
+                  <Route path="/claims-management" element={<ClaimRewardTable />} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
 

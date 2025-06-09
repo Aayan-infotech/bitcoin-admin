@@ -17,7 +17,7 @@ const Login = ({ setIsLoggedIn }) => {
         email,
         password,
       });
-
+      console.log(res,"login res")
       if (res?.data?.user?.accountType !== "Admin") {
         toast.error("Only Admin access this platform");
         return;
