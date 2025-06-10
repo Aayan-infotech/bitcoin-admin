@@ -29,7 +29,7 @@ const AlphabetsManagement = () => {
       const response = await axios.get(
         `${API_BASE_URL}/alphabet/get-all-alphabet`
       );
-      console.log(response)
+      console.log(response);
       setAlphabets(response?.data?.data);
     } catch (error) {
       console.error("Error fetching alphabets:", error);
@@ -47,21 +47,24 @@ const AlphabetsManagement = () => {
     try {
       setLoading(true);
       const formData = new FormData();
-  
+
       formData.append("alphabet", data.alphabet);
+      formData.append("title", data.title);
       formData.append("description", data.description);
       formData.append("relatedTerms", JSON.stringify(data.relatedTerms)); // Convert array to string
       formData.append("examples", JSON.stringify(data.examples)); // Convert array to string
-  
+
       if (data.image && Array.isArray(data.image) && data.image.length > 0) {
         formData.append("files", data.image[0]);
       }
-  
+
+      formData.append("files", data.image[0]);
+
       // Log FormData before sending
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
-  
+
       let res;
       if (editAlphabet) {
         res = await axios.patch(
@@ -78,7 +81,7 @@ const AlphabetsManagement = () => {
         );
         toast.success(res.data.message || "Alphabet created successfully");
       }
-  
+
       fetchAlphabets();
       setEditAlphabet(null);
       setIsModalOpen(false);
@@ -90,12 +93,17 @@ const AlphabetsManagement = () => {
       setLoading(false);
     }
   };
-  
 
   // Open modal for creating new alphabet
   const handleAddAlphabet = () => {
     setEditAlphabet(null);
-    reset({ alphabet: "", description: "", relatedTerms: "", examples: "" });
+    reset({
+      alphabet: "",
+      title: "",
+      description: "",
+      relatedTerms: "",
+      examples: "",
+    });
     setIsModalOpen(true);
     toast.info("Creating a new alphabet.");
   };
@@ -104,6 +112,7 @@ const AlphabetsManagement = () => {
     setEditAlphabet(alphabetData);
     reset({
       alphabet: alphabetData.alphabet,
+      title: alphabetData.title,
       description: alphabetData.description,
       relatedTerms: alphabetData.relatedTerms, // Adjust if necessary
       examples: alphabetData.examples, // Adjust if necessary
@@ -135,7 +144,10 @@ const AlphabetsManagement = () => {
         {alphabets?.length === 0 ? (
           <p>No Alphabets found</p>
         ) : (
-          <AlphabetTable data={alphabets} handleEditAlphabet={handleEditAlphabet} />
+          <AlphabetTable
+            data={alphabets}
+            handleEditAlphabet={handleEditAlphabet}
+          />
         )}
       </div>
 
@@ -152,11 +164,31 @@ const AlphabetsManagement = () => {
                 <input
                   {...register("alphabet", {
                     required: "Alphabet is required",
+                    validate: (value) =>
+                      /^[A-Za-z]$/.test(value) ||
+                      "Only a single alphabet character is allowed",
+                  })}
+                  className="w-full p-2 border rounded"
+                  maxLength={1} // optional: restrict typing to 1 character
+                />
+                {errors.alphabet && (
+                  <p className="text-red-500 text-sm">
+                    {errors.alphabet.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Title Input */}
+              <div className="mb-4">
+                <label className="block mb-1 font-semibold">Title</label>
+                <input
+                  {...register("title", {
+                    required: "Title is required",
                   })}
                   className="w-full p-2 border rounded"
                 />
-                {errors.alphabet && (
-                  <p className="text-red-500 text-sm">{errors.alphabet.message}</p>
+                {errors.title && (
+                  <p className="text-red-500 text-sm">{errors.title.message}</p>
                 )}
               </div>
               {/* Description Input */}
@@ -169,12 +201,16 @@ const AlphabetsManagement = () => {
                   className="w-full p-2 border rounded"
                 ></textarea>
                 {errors.description && (
-                  <p className="text-red-500 text-sm">{errors.description.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
               {/* Related Terms Input */}
               <div className="mb-4">
-                <label className="block mb-1 font-semibold">Related Terms</label>
+                <label className="block mb-1 font-semibold">
+                  Related Terms
+                </label>
                 <input
                   {...register("relatedTerms", {
                     required: "Related Terms are required",
@@ -183,7 +219,9 @@ const AlphabetsManagement = () => {
                   className="w-full p-2 border rounded"
                 />
                 {errors.relatedTerms && (
-                  <p className="text-red-500 text-sm">{errors.relatedTerms.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.relatedTerms.message}
+                  </p>
                 )}
               </div>
               {/* Examples Input */}
@@ -197,7 +235,9 @@ const AlphabetsManagement = () => {
                   className="w-full p-2 border rounded"
                 />
                 {errors.examples && (
-                  <p className="text-red-500 text-sm">{errors.examples.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.examples.message}
+                  </p>
                 )}
               </div>
               {/* Image File Input */}
@@ -230,8 +270,11 @@ const AlphabetsManagement = () => {
                   className="text-white p-2 rounded hover:bg-blue-600 flex items-center"
                   disabled={loading}
                 >
-                 
-                  {loading?"Loading...":editAlphabet ? "Update Alphabet" :"Create Alphabet"}
+                  {loading
+                    ? "Loading..."
+                    : editAlphabet
+                    ? "Update Alphabet"
+                    : "Create Alphabet"}
                 </button>
               </div>
             </form>
