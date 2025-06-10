@@ -17,6 +17,7 @@ const RewardClaimTable = () => {
       const response = await axios.get(`${API_BASE_URL}/payment/pending-requests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      
       setClaims(response.data.claims);
     } catch (err) {
       toast.error("Failed to load reward claims");
