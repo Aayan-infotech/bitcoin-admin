@@ -1,6 +1,6 @@
 FROM node:20 AS build
 
-# Set the working directory
+# Set the worki
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json
