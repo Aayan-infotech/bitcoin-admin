@@ -139,7 +139,6 @@ const AlphabetsManagement = () => {
           Create Alphabet
         </button>
       </div>
-
       <div className="bg-white p-6 rounded-lg shadow-md">
         {alphabets?.length === 0 ? (
           <p>No Alphabets found</p>
