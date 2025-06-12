@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "docker.io/aayanindia/bitcoin-admin"
         CONTAINER_PORT = "3125"
-        HOST_PORT = "3125"
+        HOST_PORT = "3115"
         DOCKER_HUB_USERNAME = credentials('docker-hub-username')
         DOCKER_HUB_PASSWORD = credentials('docker-hub-password')
         EMAIL_RECIPIENTS = "anurag.yadav@aayaninfotech.com"
