@@ -9,6 +9,7 @@ const RewardClaimTable = () => {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [amountToSend, setAmountToSend] = useState(0.000001);
   const [processing, setProcessing] = useState(false);
+  const [showSettled, setShowSettled] = useState(false); // new
 
   const fetchClaims = async () => {
     setLoading(true);
@@ -17,7 +18,6 @@ const RewardClaimTable = () => {
       const response = await axios.get(`${API_BASE_URL}/payment/pending-requests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
       setClaims(response.data.claims);
     } catch (err) {
       toast.error("Failed to load reward claims");
@@ -27,7 +27,7 @@ const RewardClaimTable = () => {
 
   const openModal = (claim) => {
     setSelectedClaim(claim);
-    setAmountToSend(claim.score); // Default to claimed score
+    setAmountToSend(claim.score);
   };
 
   const closeModal = () => {
@@ -44,10 +44,10 @@ const RewardClaimTable = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `${API_BASE_URL}/payment/transfer`,
+        `${API_BASE_URL}/payment/approve-request/${selectedClaim?._id}`,
         {
           userId: selectedClaim.user,
-          amount: "0.00001",
+          amount: amountToSend,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -67,59 +67,104 @@ const RewardClaimTable = () => {
     fetchClaims();
   }, []);
 
+  const pendingClaims = claims.filter((c) => c.status === "Pending");
+  const settledClaims = claims.filter((c) => c.status === "Approved");
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Pending Reward Claims</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">Reward Claims</h2>
 
       {loading ? (
         <div className="text-center py-4 text-gray-500">Loading...</div>
-      ) : claims.length === 0 ? (
-        <div className="text-center py-4 text-gray-500">No pending reward claims</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">User</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Total Points</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Action</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {claims.map((claim) => (
-                <tr key={claim._id}>
-                  <td className="px-6 py-4 text-gray-700">{claim.user?.name || claim.user}</td>
-                  <td className="px-6 py-4 text-gray-700">{claim.score}</td>
-                  <td className="px-6 py-4 text-gray-700">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        claim.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {claim.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {claim.status === "Pending" && (
-                      <button
-                        onClick={() => openModal(claim)}
-                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 text-sm rounded-md"
-                      >
-                        Approve
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {/* PENDING CLAIMS TABLE */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Pending Claims</h3>
+            {pendingClaims.length === 0 ? (
+              <p className="text-gray-500 text-sm">No pending reward claims</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">User</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Points</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {pendingClaims.map((claim) => (
+                      <tr key={claim._id}>
+                        <td className="px-6 py-4 text-gray-700">{claim.user?.name || claim.user}</td>
+                        <td className="px-6 py-4 text-gray-700">{claim.score}</td>
+                        <td className="px-6 py-4 text-gray-700">
+                          <span className="px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                            Pending
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => openModal(claim)}
+                            className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 text-sm rounded-md"
+                          >
+                            Approve
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* SETTLED CLAIMS ACCORDION */}
+          <div>
+            <button
+              onClick={() => setShowSettled((prev) => !prev)}
+              className="text-sm text-blue-600 hover:underline mb-2"
+            >
+              {showSettled ? "Hide Settled Claims ▲" : "Show Settled Claims ▼"}
+            </button>
+
+            {showSettled && (
+              <div className="overflow-x-auto border-t pt-4">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Settled Claims</h3>
+                {settledClaims.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No settled reward claims</p>
+                ) : (
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">User</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Points</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {settledClaims.map((claim) => (
+                        <tr key={claim._id}>
+                          <td className="px-6 py-4 text-gray-700">{claim.user?.name || claim.user}</td>
+                          <td className="px-6 py-4 text-gray-700">{claim.score}</td>
+                          <td className="px-6 py-4 text-gray-700">
+                            <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                              Approved
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+          </div>
+        </>
       )}
 
-      {/* Modal */}
+      {/* APPROVAL MODAL */}
       {selectedClaim && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">

@@ -1,7 +1,7 @@
 import React from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 
-const AlphabetTable = ({ data, handleEditAlphabet }) => {
+const AlphabetTable = ({ data, handleEditAlphabet, handleDeleteAlphabet }) => {
   console.log(data, "dataaaaa");
 
   return (
@@ -53,7 +53,7 @@ const AlphabetTable = ({ data, handleEditAlphabet }) => {
                   onClick={() => handleEditAlphabet(item)}
                   size={25}
                 />
-                <AiOutlineDelete size={25} />
+                <AiOutlineDelete size={25}  onClick={() => handleDeleteAlphabet(item._id)} />
               </td>
             </tr>
           ))}

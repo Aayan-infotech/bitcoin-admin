@@ -8,27 +8,21 @@ import { API_BASE_URL } from "../../data/constants";
 
 const QuizQuestionsManagement = () => {
   const { currentColor } = useStateContext();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
   const { quizId } = useParams();
-  const [sections, setSections] = useState(null); // Start with null to indicate loading state
+
+  const [sections, setSections] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editQuestion, setEditQuestion] = useState(null);
+  const [optionFields, setOptionFields] = useState(["", "", "", ""]);
+  const [correctAnswer, setCorrectAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Fetch Quiz and Questions Data
   const fetchSections = useCallback(async () => {
     if (!quizId) return;
     try {
-      console.log("Fetching quiz data for Quiz ID:", quizId);
-      const response = await axios.get(
-        `${API_BASE_URL}/quiz/get-quizById/${quizId}`
-      );
-      setSections(response.data.quiz); // Assuming quiz contains questions
+      const response = await axios.get(`${API_BASE_URL}/quiz/get-quizById/${quizId}`);
+      setSections(response.data.quiz);
     } catch (error) {
       console.error("Error fetching quiz data:", error);
       toast.error("Error fetching quiz data");
@@ -39,70 +33,72 @@ const QuizQuestionsManagement = () => {
     fetchSections();
   }, [fetchSections]);
 
-  // Open the modal for editing a question
   const handleEditQuestion = (question) => {
     setEditQuestion(question);
     setIsModalOpen(true);
-    reset({
-      ...question,
-      options: question.options.join(", "), // Convert options array into a comma-separated string
-    });
+    reset({ text: question.text });
+    setOptionFields(question.options || ["", "", "", ""]);
+    setCorrectAnswer(question.correctAnswer || "");
   };
 
-  // Open modal in "add" mode
   const handleAddQuestion = () => {
-    setEditQuestion(null); // Clear any edit state
-    reset({ text: "", options: "", correctAnswer: "" }); // Reset the form fields for new question
+    setEditQuestion(null);
+    reset({ text: "" });
+    setOptionFields(["", "", "", ""]);
+    setCorrectAnswer("");
     setIsModalOpen(true);
+  };
+
+  const updateOption = (index, value) => {
+    const updatedOptions = [...optionFields];
+    updatedOptions[index] = value;
+    setOptionFields(updatedOptions);
   };
 
   const handleDeleteQuestion = async (questionId) => {
     try {
-      console.log(questionId);
-      const res = await axios.delete(
-        `${API_BASE_URL}/quiz/delete-question`,
-        { data: { questionId } } 
-      );
-      if (res.data.message) {
-        toast.success(res.data.message);
-      }
-      console.log(res);
+      const res = await axios.delete(`${API_BASE_URL}/quiz/delete-question`, {
+        data: { questionId },
+      });
+      if (res.data.message) toast.success(res.data.message);
+      fetchSections();
     } catch (error) {
       console.log(error);
       toast.error("Failed to delete question");
     }
-    fetchSections();
-    fetchSections();
   };
 
-  // Save Edited or Added Question
   const saveQuestionChanges = async (data) => {
+    if (loading) return; // avoid multiple clicks
+
     try {
+      setLoading(true);
       const updatedQuestion = {
-        ...data,
-        options: data.options.split(",").map((option) => option.trim()), // Convert string back into array
+        text: data.text,
+        options: optionFields.map((opt) => opt.trim()).filter(Boolean),
+        correctAnswer: correctAnswer,
       };
 
       if (editQuestion) {
-        // Editing an existing question
         await axios.patch(
           `${API_BASE_URL}/quiz/update-question/${editQuestion._id}`,
           updatedQuestion
         );
         toast.success("Question updated successfully");
       } else {
-        // Adding a new question
-        await axios.post(
-          `${API_BASE_URL}/quiz/add-question/${quizId}`,
-          {questions:[updatedQuestion]}
-        );
+        await axios.post(`${API_BASE_URL}/quiz/add-question/${quizId}`, {
+          questions: [updatedQuestion],
+        });
         toast.success("Question added successfully");
       }
-      fetchSections(); // Reload quiz data with updated/added question
-      setIsModalOpen(false); // Close the modal
+
+      fetchSections();
+      setIsModalOpen(false);
     } catch (error) {
-      console.error("Error updating question:", error);
+      console.error("Error saving question:", error);
       toast.error("Error saving question");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,8 +106,7 @@ const QuizQuestionsManagement = () => {
     <div className="m-4 p-6 bg-gray-100 rounded-3xl">
       <div className="flex justify-between items-center font-semibold text-center mb-6">
         <h1>{sections?.title} - Questionnaire Management</h1>
-        {/* Add Question Button */}
-        <button 
+        <button
           onClick={handleAddQuestion}
           className="bg-green-500 text-white px-4 py-2 rounded-md"
         >
@@ -119,7 +114,6 @@ const QuizQuestionsManagement = () => {
         </button>
       </div>
 
-      {/* Display Quiz Image and Description */}
       <div className="mb-6 text-center">
         <img
           src={sections?.image}
@@ -127,8 +121,7 @@ const QuizQuestionsManagement = () => {
           className="w-full h-48 object-cover rounded-lg shadow-lg"
         />
         <p className="mt-4 text-gray-700 text-xl">
-          Description:-{" "}
-          <span className="text-gray-900">{sections?.description}</span>
+          Description:- <span className="text-gray-900">{sections?.description}</span>
         </p>
       </div>
 
@@ -146,16 +139,11 @@ const QuizQuestionsManagement = () => {
             <tr key={question._id} className="border-b hover:bg-gray-50">
               <td className="border p-3">
                 <p className="font-semibold">{question.text}</p>
-                <p className="text-sm text-gray-600">
-                  {question?.description?.slice(0, 50)}
-                </p>
               </td>
               <td className="border p-3">
-                <ul className="space-y-2">
+                <ul className="space-y-1">
                   {question.options?.map((option, idx) => (
-                    <li key={idx} className="text-gray-700">
-                      {option}
-                    </li>
+                    <li key={idx} className="text-gray-700">{option}</li>
                   ))}
                 </ul>
               </td>
@@ -181,7 +169,6 @@ const QuizQuestionsManagement = () => {
         </tbody>
       </table>
 
-      {/* Modal for Editing/Adding Question */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
@@ -193,9 +180,7 @@ const QuizQuestionsManagement = () => {
                 <label className="block mb-2">Question Text</label>
                 <input
                   type="text"
-                  {...register("text", {
-                    required: "Question text is required",
-                  })}
+                  {...register("text", { required: "Question text is required" })}
                   className="w-full p-2 border rounded"
                 />
                 {errors.text && (
@@ -203,33 +188,27 @@ const QuizQuestionsManagement = () => {
                 )}
               </div>
 
-              <div className="mb-4">
-                <label className="block mb-2">Options (comma separated)</label>
-                <input
-                  type="text"
-                  {...register("options", {
-                    required: "Options are required",
-                  })}
-                  className="w-full p-2 border rounded"
-                />
-                {errors.options && (
-                  <p className="text-red-500 text-sm">{errors.options.message}</p>
-                )}
-              </div>
-
-              <div className="mb-4">
-                <label className="block mb-2">Correct Answer</label>
-                <input
-                  type="text"
-                  {...register("correctAnswer", {
-                    required: "Correct answer is required",
-                  })}
-                  className="w-full p-2 border rounded"
-                />
-                {errors.correctAnswer && (
-                  <p className="text-red-500 text-sm">{errors.correctAnswer.message}</p>
-                )}
-              </div>
+              <label className="block mb-2">Options</label>
+              {[0, 1, 2, 3].map((index) => (
+                <div key={index} className="mb-2 flex items-center">
+                  <input
+                    type="text"
+                    placeholder={`Option ${index + 1}`}
+                    value={optionFields[index] || ""}
+                    onChange={(e) => updateOption(index, e.target.value)}
+                    className="w-full p-2 border rounded mr-2"
+                    required
+                  />
+                  <input
+                    type="radio"
+                    name="correctOption"
+                    value={optionFields[index]}
+                    checked={correctAnswer === optionFields[index]}
+                    onChange={() => setCorrectAnswer(optionFields[index])}
+                  />
+                  <label className="ml-1 text-sm">Correct</label>
+                </div>
+              ))}
 
               <div className="mt-4 flex justify-end">
                 <button
@@ -241,9 +220,12 @@ const QuizQuestionsManagement = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white p-2 rounded"
+                  disabled={loading}
+                  className={`p-2 rounded text-white ${
+                    loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600"
+                  }`}
                 >
-                  Save Changes
+                  {loading ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </form>

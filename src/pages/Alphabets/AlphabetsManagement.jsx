@@ -127,6 +127,19 @@ const AlphabetsManagement = () => {
     setIsModalOpen(false);
   };
 
+  const handleDeleteAlphabet = async(data) => {
+    try{
+      const confirm = window.confirm("Are you sure  you want to delete this alphabet?");
+      if(confirm){
+        await axios.delete(`${API_BASE_URL}/alphabet/delete-alphabet/${data}`);
+        fetchAlphabets();
+      }
+    }
+    catch(error){
+      console.error("Error deleting alphabet:", error);
+    }
+  }
+
   return (
     <div className="m-2 md:m-2 p-4 relative md:p-10 bg-gray-200 md:rounded-3xl rounded-xl">
       <div className="flex my-2 justify-between">
@@ -146,6 +159,7 @@ const AlphabetsManagement = () => {
           <AlphabetTable
             data={alphabets}
             handleEditAlphabet={handleEditAlphabet}
+            handleDeleteAlphabet={handleDeleteAlphabet}
           />
         )}
       </div>
