@@ -72,7 +72,7 @@ const RewardClaimTable = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Reward Claims</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">Reward Claim</h2>
 
       {loading ? (
         <div className="text-center py-4 text-gray-500">Loading...</div>
