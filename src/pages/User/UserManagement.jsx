@@ -8,8 +8,8 @@ const UserManagement = () => {
       <div className="flex my-2 justify-between">
         <Header category="Page" title="Users" />
       </div>
-      
-      <div className="bg-white p-6 rounded-lg shadow-md">
+
+      <div className="bg-white h-full overflow-y-auto p-6 rounded-lg shadow-md">
         <UsersTable />
       </div>
     </div>
