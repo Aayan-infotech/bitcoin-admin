@@ -40,6 +40,16 @@ export const links = [
         name: "Alphabet Management",
         icon: <TiSortAlphabeticallyOutline />,
         path: "alphabet-management",
+        children: [
+          {
+            name: "ABC Management",
+            path: "alphabet-management",
+          },
+          {
+            name: "Alphabet Details",
+            path: "alphabet-desc",
+          },
+        ],
       },
       {
         name: "Notification Management",

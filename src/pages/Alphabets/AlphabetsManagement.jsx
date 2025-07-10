@@ -51,8 +51,8 @@ const AlphabetsManagement = () => {
       formData.append("alphabet", data.alphabet);
       formData.append("title", data.title);
       formData.append("description", data.description);
-      formData.append("relatedTerms", JSON.stringify(data.relatedTerms)); // Convert array to string
-      formData.append("examples", JSON.stringify(data.examples)); // Convert array to string
+      formData.append("relatedTerms", data.relatedTerms); // Convert array to string
+      formData.append("examples", data.examples); // Convert array to string
 
       if (data.image && Array.isArray(data.image) && data.image.length > 0) {
         formData.append("files", data.image[0]);

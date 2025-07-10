@@ -20,6 +20,7 @@ const AlphabetsManagement = React.lazy(() => import("./pages/Alphabets/Alphabets
 const NotificationManagement = React.lazy(() => import("./pages/Notification/NotificationManagement"));
 const PaymentManagement = React.lazy(() => import("./pages/Payment/PaymentManagement"));
 const ClaimRewardTable = React.lazy(() => import("./pages/Payment/RewardClaimtable"));
+const AlphabetDesc = React.lazy(() => import("./pages/Alphabets/AlphbetDesc"));
 
 const App = () => {
   const {
@@ -112,6 +113,7 @@ const App = () => {
                   <Route path="/quiz/:quizId/questions" element={<QuizQuestionsManagement />} />
                   <Route path="/faq-management" element={<FAQ />} />
                   <Route path="/alphabet-management" element={<AlphabetsManagement />} />
+                  <Route path="/alphabet-desc" element={<AlphabetDesc />} />
                   <Route path="/notification-management" element={<NotificationManagement />} />
                   <Route path="/payment-management" element={<PaymentManagement />} />
                   <Route path="/claims-management" element={<ClaimRewardTable />} />
