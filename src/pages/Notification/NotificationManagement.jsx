@@ -73,21 +73,30 @@ const NotificationManagement = () => {
   const [message, setMessage] = useState("");
   const [targetUserId, setTargetUserId] = useState("");
   const [users, setUsers] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${API_BASE_URL}/notification/all-notification`
+        `${API_BASE_URL}/notification/all-notification?page=${page}&limit=${limit}`
       );
+      console.log(response?.data)
       setNotifications(response?.data?.data || []);
+      setTotalPages(response?.data?.totalPages || 1);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       toast.error("Failed to fetch notifications.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, limit]);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -106,9 +115,8 @@ const NotificationManagement = () => {
   }, [token]);
 
   useEffect(() => {
-    fetchNotifications();
     fetchUsers();
-  }, [fetchNotifications, fetchUsers]);
+  }, [fetchUsers]);
 
   const handleSendNotification = async () => {
     if (!message.trim()) {
@@ -130,7 +138,7 @@ const NotificationManagement = () => {
       setIsModalOpen(false);
       setMessage("");
       setTargetUserId("");
-      fetchNotifications();
+      fetchNotifications(); // refresh notifications
     } catch (error) {
       console.error("Error sending notification:", error);
       toast.error("Failed to send notification.");
@@ -156,9 +164,32 @@ const NotificationManagement = () => {
         ) : notifications?.length === 0 ? (
           <p>No notifications found</p>
         ) : (
-          <div className="max-h-[500px] overflow-y-auto">
-            <NotificationTable data={notifications} />
-          </div>
+          <>
+            <div className="max-h-[500px] overflow-y-auto">
+              <NotificationTable data={notifications} />
+            </div>
+
+            {/* Pagination UI */}
+            <div className="flex justify-end mt-4 space-x-2">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+              >
+                Prev
+              </button>
+              <span className="px-3 py-1">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
 

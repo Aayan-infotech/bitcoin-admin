@@ -72,6 +72,7 @@ const AlphabetDesc = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true)
     try {
       if (selectedSection === "oracle") {
         await Promise.all(
@@ -85,7 +86,7 @@ const AlphabetDesc = () => {
             }
 
             await axios.put(
-              `${API_BASE_URL}/abc-details/o/${item._id}`,
+              `${API_BASE_URL}/abc-details/o/update-oracle/${item._id}`,
               formData,
               {
                 headers: {
@@ -105,6 +106,8 @@ const AlphabetDesc = () => {
       setIsEditing(false);
     } catch (err) {
       console.error("Failed to save:", err);
+    }finally{
+    setLoading(false)
     }
   };
 

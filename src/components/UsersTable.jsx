@@ -129,7 +129,7 @@ const UsersTable = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center mt-4 space-x-4">
+      <div className="flex justify-end mt-4 space-x-4">
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
