@@ -7,13 +7,13 @@ import avatar from "../data/avatar4.jpg";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
-  const { logout, currentColor } = useStateContext(); // Get logout function from context
+  const { logout, currentColor } = useStateContext();
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    console.log("log out called");
     logout();
-    navigate("/"); // Redirect to login page
-    window.location.reload();
+    navigate("/");
   };
 
   return (
@@ -28,6 +28,7 @@ const UserProfile = () => {
           borderRadius="50%"
         />
       </div>
+
       <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
         <img
           className="rounded-full h-24 w-24"
@@ -44,16 +45,14 @@ const UserProfile = () => {
           </p>
         </div>
       </div>
+
       <div className="mt-5">
         <button
-          color="white"
+        style={{ backgroundColor: currentColor }}
+          className={` text-white px-4 py-2 rounded`}
           onClick={handleLogout}
-          className=" bg-black text-white w-full rounded-md p-2"
-          text="Logout"
-          borderRadius="10px"
-          width="full"
         >
-          Log out
+           Logout
         </button>
       </div>
     </div>

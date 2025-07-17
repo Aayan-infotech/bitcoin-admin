@@ -18,7 +18,6 @@ export const ContextProvider = ({ children }) => {
   const [isClicked, setIsClicked] = useState(initialState);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Load theme and auth state from localStorage
   useEffect(() => {
     const storedColor = localStorage.getItem("colorMode");
     const storedMode = localStorage.getItem("themeMode");
@@ -49,9 +48,12 @@ export const ContextProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-  };
+  localStorage.removeItem("token");
+  localStorage.removeItem("isLoggedIn");
+  setIsLoggedIn(false);
+  window.location.reload()
+};
+
 
   return (
     <StateContext.Provider

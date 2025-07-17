@@ -1,47 +1,64 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast"; // Use toast for better feedback
+import { toast } from "react-hot-toast";
 import { API_BASE_URL } from "../data/constants";
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = ({ setIsLoggedIn, isLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const isMounted = useRef(true);
   const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, [isLoggedIn, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,
       });
-      console.log(res,"login res")
-      if (res?.data?.user?.accountType !== "Admin") {
-        toast.error("Only Admin access this platform");
+
+      const { success, token, user } = res.data;
+
+      if (user?.accountType !== "Admin") {
+        toast.error("Only Admins can access this platform.");
         return;
       }
-      if (res?.data?.success) {
-        const token = res?.data?.token;
-        if (token) {
-          localStorage.setItem("token", token); // Store token
-          setIsLoggedIn(true); // Update authentication state
 
-          // Use toast for successful login
-          window.location.reload();
+      if (success && token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("isLoggedIn", "true");
+
+        if (isMounted.current) {
+          setIsLoggedIn(true);
           toast.success("Login successful!");
-
           navigate("/");
-        } else {
-          toast.error("Login failed: No token received");
         }
       } else {
-        toast.error("Invalid Credentials");
+        toast.error("Invalid credentials");
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error.response.data.message);
+      if (isMounted.current) {
+        toast.error(error?.response?.data?.message || "Login failed");
+      }
+    } finally {
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -61,6 +78,7 @@ const Login = ({ setIsLoggedIn }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
 
@@ -72,14 +90,18 @@ const Login = ({ setIsLoggedIn }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+          disabled={loading}
+          className={`w-full bg-blue-500 text-white py-2 rounded-lg ${
+            loading ? "bg-blue-300 cursor-not-allowed" : "hover:bg-blue-600"
+          }`}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

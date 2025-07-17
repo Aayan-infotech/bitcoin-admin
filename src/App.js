@@ -10,16 +10,30 @@ const Sidebar = React.lazy(() => import("./components/Sidebar"));
 const ThemeSettings = React.lazy(() => import("./components/ThemeSettings"));
 const Footer = React.lazy(() => import("./components/Footer"));
 const Login = React.lazy(() => import("./components/Login"));
-const CourseCreation = React.lazy(() => import("./pages/Course/CourseManagement"));
-const CourseSections = React.lazy(() => import("./pages/Course/CourseSections"));
+const CourseCreation = React.lazy(() =>
+  import("./pages/Course/CourseManagement")
+);
+const CourseSections = React.lazy(() =>
+  import("./pages/Course/CourseSections")
+);
 const QuizManagement = React.lazy(() => import("./pages/Quiz/QuizManagement"));
-const QuizQuestionsManagement = React.lazy(() => import("./pages/Quiz/QuizQuestionsManagement"));
+const QuizQuestionsManagement = React.lazy(() =>
+  import("./pages/Quiz/QuizQuestionsManagement")
+);
 const FAQ = React.lazy(() => import("./pages/FAQ/FAQ"));
 const UserManagement = React.lazy(() => import("./pages/User/UserManagement"));
-const AlphabetsManagement = React.lazy(() => import("./pages/Alphabets/AlphabetsManagement"));
-const NotificationManagement = React.lazy(() => import("./pages/Notification/NotificationManagement"));
-const PaymentManagement = React.lazy(() => import("./pages/Payment/PaymentManagement"));
-const ClaimRewardTable = React.lazy(() => import("./pages/Payment/RewardClaimtable"));
+const AlphabetsManagement = React.lazy(() =>
+  import("./pages/Alphabets/AlphabetsManagement")
+);
+const NotificationManagement = React.lazy(() =>
+  import("./pages/Notification/NotificationManagement")
+);
+const PaymentManagement = React.lazy(() =>
+  import("./pages/Payment/PaymentManagement")
+);
+const ClaimRewardTable = React.lazy(() =>
+  import("./pages/Payment/RewardClaimtable")
+);
 const AlphabetDesc = React.lazy(() => import("./pages/Alphabets/AlphbetDesc"));
 
 const App = () => {
@@ -70,7 +84,12 @@ const App = () => {
         <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
           {!isLoggedIn ? (
             <Routes>
-              <Route path="/*" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+              <Route
+                path="/*"
+                element={
+                  <Login setIsLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn} />
+                }
+              />
             </Routes>
           ) : (
             <div className="flex relative dark:bg-gray-900">
@@ -107,16 +126,37 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<UserManagement />} />
                   <Route path="/user-management" element={<UserManagement />} />
-                  <Route path="/course-management" element={<CourseCreation />} />
-                  <Route path="/courses/:courseId/sections" element={<CourseSections />} />
+                  <Route
+                    path="/course-management"
+                    element={<CourseCreation />}
+                  />
+                  <Route
+                    path="/courses/:courseId/sections"
+                    element={<CourseSections />}
+                  />
                   <Route path="/quiz-management" element={<QuizManagement />} />
-                  <Route path="/quiz/:quizId/questions" element={<QuizQuestionsManagement />} />
+                  <Route
+                    path="/quiz/:quizId/questions"
+                    element={<QuizQuestionsManagement />}
+                  />
                   <Route path="/faq-management" element={<FAQ />} />
-                  <Route path="/alphabet-management" element={<AlphabetsManagement />} />
+                  <Route
+                    path="/alphabet-management"
+                    element={<AlphabetsManagement />}
+                  />
                   <Route path="/alphabet-desc" element={<AlphabetDesc />} />
-                  <Route path="/notification-management" element={<NotificationManagement />} />
-                  <Route path="/payment-management" element={<PaymentManagement />} />
-                  <Route path="/claims-management" element={<ClaimRewardTable />} />
+                  <Route
+                    path="/notification-management"
+                    element={<NotificationManagement />}
+                  />
+                  <Route
+                    path="/payment-management"
+                    element={<PaymentManagement />}
+                  />
+                  <Route
+                    path="/claims-management"
+                    element={<ClaimRewardTable />}
+                  />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
 
