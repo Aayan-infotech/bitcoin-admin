@@ -15,7 +15,6 @@ const QuizManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editQuiz, setEditQuiz] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -26,16 +25,14 @@ const QuizManagement = () => {
   } = useForm();
 
   const fetchQuizzes = useCallback(async () => {
-    setLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/quiz/get-all-quizzes`);
+      const response = await axios.get(
+        `${API_BASE_URL}/quiz/get-all-quizzes`
+      );
       toast.success(response.data.message);
       setQuizzes(response.data.quizzes);
     } catch (error) {
       console.error("Error fetching quizzes:", error);
-      toast.error("Failed to fetch quizzes");
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -44,7 +41,6 @@ const QuizManagement = () => {
   }, [fetchQuizzes]);
 
   const onSubmit = async (data) => {
-    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("title", data.title);
@@ -69,20 +65,20 @@ const QuizManagement = () => {
       }
 
       if (response.data.success) {
-        toast.success(editQuiz ? "Quiz updated successfully" : "Quiz created successfully");
+        toast.success(
+          editQuiz ? "Quiz updated successfully" : "Quiz created successfully"
+        );
         reset();
         setPreviewImage(null);
         setEditQuiz(null);
         setIsModalOpen(false);
-        fetchQuizzes();
+        fetchQuizzes(); 
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Error saving quiz:", error);
       toast.error("Failed to save quiz");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -98,17 +94,15 @@ const QuizManagement = () => {
   );
 
   const onDelete = async (quizId) => {
-    if (loading) return;
-    setLoading(true);
     try {
-      await axios.delete(`${API_BASE_URL}/quiz/delete-quiz/${quizId}`);
+      await axios.delete(
+        `${API_BASE_URL}/quiz/delete-quiz/${quizId}`
+      );
       toast.success("Quiz deleted successfully");
       fetchQuizzes();
     } catch (error) {
       console.error("Error deleting quiz:", error);
       toast.error("Failed to delete quiz");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -146,14 +140,12 @@ const QuizManagement = () => {
                 <button
                   onClick={() => onEdit(quiz)}
                   className="text-blue-500 hover:underline"
-                  disabled={loading}
                 >
                   <AiOutlineEdit size={25} />
                 </button>
                 <button
                   onClick={() => onDelete(quiz._id)}
                   className="text-red-500 hover:underline"
-                  disabled={loading}
                 >
                   <AiOutlineDelete size={25} />
                 </button>
@@ -169,7 +161,7 @@ const QuizManagement = () => {
         </tbody>
       </table>
     );
-  }, [quizzes, onEdit, handleViewQuestions, onDelete, loading]);
+  }, [quizzes, onEdit, handleViewQuestions, onDelete]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -198,7 +190,6 @@ const QuizManagement = () => {
 
       <div className="bg-white p-4 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold mb-2">Quiz List</h3>
-        {loading && <p className="text-sm text-blue-500 mb-2">Loading...</p>}
         {quizzes.length === 0 ? (
           <p>No quizzes available.</p>
         ) : (
@@ -265,10 +256,9 @@ const QuizManagement = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
-                  className={`p-2 rounded text-white ${loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600"}`}
+                  className="bg-blue-600 text-white p-2 rounded"
                 >
-                  {loading ? "Saving..." : editQuiz ? "Update Quiz" : "Create Quiz"}
+                  {editQuiz ? "Update Quiz" : "Create Quiz"}
                 </button>
               </div>
             </form>

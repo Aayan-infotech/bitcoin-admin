@@ -10,10 +10,10 @@ const UserProfile = () => {
   const { logout, currentColor } = useStateContext();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("log out called");
-    logout();
-    navigate("/");
+    await logout();
+    navigate("/",{replace:true});
   };
 
   return (
@@ -48,11 +48,11 @@ const UserProfile = () => {
 
       <div className="mt-5">
         <button
-        style={{ backgroundColor: currentColor }}
+          style={{ backgroundColor: currentColor }}
           className={` text-white px-4 py-2 rounded`}
           onClick={handleLogout}
         >
-           Logout
+          Logout
         </button>
       </div>
     </div>

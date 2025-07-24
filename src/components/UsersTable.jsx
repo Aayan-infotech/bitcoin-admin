@@ -108,12 +108,12 @@ const UsersTable = () => {
                     >
                       <FaEye />
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => handleDelete(user._id)}
                       className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                     >
                       <FaTrash />
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))

@@ -3,8 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { FiSettings } from "react-icons/fi";
 import { useStateContext } from "./contexts/ContextProvider";
+import Loader from "./components/Loader";
 
-// Lazy imports
+const ProtectedRoute = React.lazy(() =>
+  import("./protectedRoute/ProtectedRoute")
+);
 const Navbar = React.lazy(() => import("./components/Navbar"));
 const Sidebar = React.lazy(() => import("./components/Sidebar"));
 const ThemeSettings = React.lazy(() => import("./components/ThemeSettings"));
@@ -81,89 +84,114 @@ const App = () => {
   return (
     <div className={currentMode === "Dark" ? "dark" : ""}>
       <BrowserRouter>
-        <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
-          {!isLoggedIn ? (
-            <Routes>
-              <Route
-                path="/*"
-                element={
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            {/* Login route stays public */}
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  <Navigate to="/dashboard" />
+                ) : (
                   <Login setIsLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn} />
-                }
-              />
-            </Routes>
-          ) : (
-            <div className="flex relative dark:bg-gray-900">
-              <div className="fixed right-4 bottom-4 z-50">
-                <button
-                  onClick={() => setThemeSettings(true)}
-                  style={{ backgroundColor: currentColor }}
-                  className="p-3 text-white rounded-full shadow-lg"
-                >
-                  <FiSettings size={24} />
-                </button>
-              </div>
+                )
+              }
+            />
 
-              {activeMenu ? (
-                <div className="w-72 fixed bg-white dark:bg-gray-800 z-10">
-                  <Sidebar />
-                </div>
-              ) : (
-                <div className="w-0">
-                  <Sidebar />
-                </div>
-              )}
+            {/* All protected routes go under ProtectedRoute */}
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                  <div className="flex relative dark:bg-gray-900">
+                    <div className="fixed right-4 bottom-4 z-50">
+                      <button
+                        onClick={() => setThemeSettings(true)}
+                        style={{ backgroundColor: currentColor }}
+                        className="p-3 text-white rounded-full shadow-lg"
+                      >
+                        <FiSettings size={24} />
+                      </button>
+                    </div>
 
-              <div
-                className={
-                  activeMenu
-                    ? "bg-gray-100 dark:bg-gray-900 min-h-screen md:ml-72 w-full"
-                    : "w-full min-h-screen"
-                }
-              >
-                <Navbar />
-                {themeSettings && <ThemeSettings />}
+                    {/* Sidebar */}
+                    {activeMenu ? (
+                      <div className="w-72 fixed bg-white dark:bg-gray-800 z-10">
+                        <Sidebar />
+                      </div>
+                    ) : (
+                      <div className="w-0">
+                        <Sidebar />
+                      </div>
+                    )}
 
-                <Routes>
-                  <Route path="/" element={<UserManagement />} />
-                  <Route path="/user-management" element={<UserManagement />} />
-                  <Route
-                    path="/course-management"
-                    element={<CourseCreation />}
-                  />
-                  <Route
-                    path="/courses/:courseId/sections"
-                    element={<CourseSections />}
-                  />
-                  <Route path="/quiz-management" element={<QuizManagement />} />
-                  <Route
-                    path="/quiz/:quizId/questions"
-                    element={<QuizQuestionsManagement />}
-                  />
-                  <Route path="/faq-management" element={<FAQ />} />
-                  <Route
-                    path="/alphabet-management"
-                    element={<AlphabetsManagement />}
-                  />
-                  <Route path="/alphabet-desc" element={<AlphabetDesc />} />
-                  <Route
-                    path="/notification-management"
-                    element={<NotificationManagement />}
-                  />
-                  <Route
-                    path="/payment-management"
-                    element={<PaymentManagement />}
-                  />
-                  <Route
-                    path="/claims-management"
-                    element={<ClaimRewardTable />}
-                  />
-                  <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
+                    {/* Main Content Area */}
+                    <div
+                      className={
+                        activeMenu
+                          ? "bg-gray-100 dark:bg-gray-900 min-h-screen md:ml-72 w-full"
+                          : "w-full min-h-screen"
+                      }
+                    >
+                      <Navbar />
+                      {themeSettings && <ThemeSettings />}
 
-                <Footer />
-              </div>
-            </div>
-          )}
+                      <Routes>
+                        <Route path="/dashboard" element={<UserManagement />} />
+                        <Route
+                          path="/user-management"
+                          element={<UserManagement />}
+                        />
+                        <Route
+                          path="/course-management"
+                          element={<CourseCreation />}
+                        />
+                        <Route
+                          path="/courses/:courseId/sections"
+                          element={<CourseSections />}
+                        />
+                        <Route
+                          path="/quiz-management"
+                          element={<QuizManagement />}
+                        />
+                        <Route
+                          path="/quiz/:quizId/questions"
+                          element={<QuizQuestionsManagement />}
+                        />
+                        <Route path="/faq-management" element={<FAQ />} />
+                        <Route
+                          path="/alphabet-management"
+                          element={<AlphabetsManagement />}
+                        />
+                        <Route
+                          path="/alphabet-desc"
+                          element={<AlphabetDesc />}
+                        />
+                        <Route
+                          path="/notification-management"
+                          element={<NotificationManagement />}
+                        />
+                        <Route
+                          path="/payment-management"
+                          element={<PaymentManagement />}
+                        />
+                        <Route
+                          path="/claims-management"
+                          element={<ClaimRewardTable />}
+                        />
+                        <Route
+                          path="*"
+                          element={<Navigate to="/dashboard" />}
+                        />
+                      </Routes>
+
+                      <Footer />
+                    </div>
+                  </div>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
         </Suspense>
       </BrowserRouter>
       <Toaster />
