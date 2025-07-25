@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStateContext } from "../contexts/ContextProvider";
 import Button from "./Button";
 import { userProfileData } from "../data/dummy";
@@ -7,17 +7,31 @@ import avatar from "../data/avatar4.jpg";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
-  const { logout, currentColor } = useStateContext();
+  const { logout, currentColor, setIsClicked } = useStateContext();
   const navigate = useNavigate();
+  const modalRef = useRef(null);
 
   const handleLogout = async () => {
     console.log("log out called");
     await logout();
-    navigate("/",{replace:true});
-  };
+    navigate("/", { replace: true });
+  };  
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        setIsClicked((prev) => ({ ...prev, userProfile: false }));
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [setIsClicked]);
 
   return (
-    <div className="nav-item z-10 right-1 top-16 absolute bg-white dark:bg-[#42464D] p-8 rounded-lg md:w-96">
+    <div
+      ref={modalRef}
+      className="nav-item z-10 right-1 top-16 absolute bg-white dark:bg-[#42464D] p-8 rounded-lg md:w-96"
+    >
       <div className="flex justify-between items-center">
         <p className="font-semibold text-lg dark:text-gray-200">User Profile</p>
         <Button
@@ -36,12 +50,14 @@ const UserProfile = () => {
           alt="user-profile"
         />
         <div>
-          <p className="font-semibold text-xl text-gray-200">Michael Roberts</p>
+          <p className="font-semibold text-xl text-gray-200">
+            Bitcoin ABC Admin
+          </p>
           <p className="text-gray-500 text-sm dark:text-gray-400">
             Administrator
           </p>
           <p className="text-gray-500 text-sm font-semibold dark:text-gray-400">
-            info@shop.com
+            bitcoinadmin@yopmail.com
           </p>
         </div>
       </div>

@@ -34,7 +34,7 @@ const Navbar = () => {
     activeMenu,
     setActiveMenu,
     handleClick,
-    isClicked,
+    isClicked,setIsClicked,
     setScreenSize,
     screenSize,
   } = useStateContext();
@@ -66,7 +66,7 @@ const Navbar = () => {
             <img className="rounded-full w-8 h-8" src={avatar} alt="user-profile" />
             <p>
               <span className="text-gray-400 text-sm">Hi,</span>
-              <span className="text-gray-400 text-sm ml-1 font-bold">Michael</span>
+              <span className="text-gray-400 text-sm ml-1 font-bold">Admin</span>
               <MdKeyboardArrowDown className="text-gray-400 text-sm" />
             </p>
           </div>
@@ -74,7 +74,7 @@ const Navbar = () => {
             Profile
           </span>
         </div>
-        {isClicked?.userProfile && <UserProfile />} {/* ✅ Fixed Null Safety */}
+        {isClicked?.userProfile && <UserProfile  />} {/* ✅ Fixed Null Safety */}
       </div>
     </div>
   );
