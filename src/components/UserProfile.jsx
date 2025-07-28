@@ -15,7 +15,7 @@ const UserProfile = () => {
     console.log("log out called");
     await logout();
     navigate("/", { replace: true });
-  };  
+  };      
 
   useEffect(() => {
     const handleClickOutside = (e) => {

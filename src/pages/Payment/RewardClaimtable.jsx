@@ -28,6 +28,7 @@ const RewardClaimTable = () => {
   };
 
   const openModal = (claim) => {
+    console.log(claim, "claimsss");
     setSelectedClaim(claim);
     setAmountToSend(claim.totalScore);
   };
@@ -46,9 +47,8 @@ const RewardClaimTable = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `${API_BASE_URL}/payment/approve-request/${selectedClaim?._id}`,
+        `${API_BASE_URL}/payment/approve-request/${selectedClaim.userId}`,
         {
-          userId: selectedClaim.user,
           amount: amountToSend,
         },
         {
