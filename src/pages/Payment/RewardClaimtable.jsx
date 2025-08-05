@@ -42,7 +42,6 @@ const RewardClaimTable = () => {
     if (!amountToSend || isNaN(amountToSend)) {
       return toast.error("Enter a valid amount");
     }
-
     setProcessing(true);
     try {
       const token = localStorage.getItem("token");
